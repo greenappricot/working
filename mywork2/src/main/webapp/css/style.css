@@ -1,0 +1,99 @@
+@charset "UTF-8";
+@font-face {
+     font-family: 'S-CoreDream-3Light';
+     src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-3Light.woff') format('woff');
+     font-weight: normal;
+     font-style: normal;
+}
+body{
+	font-family: 'S-CoreDream-3Light';
+	margin:0;
+	padding:0;
+}
+body *>a, body *>input {
+	font-family: 'S-CoreDream-3Light'
+}
+
+div#container{
+	background-color:#F0F0F0;
+	width:100%;
+	margin:0 auto;
+}
+
+header{
+	background-color:#FDF7E8;
+	height:130px;
+	position:relative;
+	padding:10px 0 0 0;
+}
+header h1{
+	margin-left : 10px;
+}
+
+section#content{
+	background-color:#F5F5F5;
+	float:left;
+	width:100%;
+	min-height:500px;
+}
+
+footer{
+	background-color:#FDF7E8;
+	clear:both;
+	height:75px;
+	text-align:center;
+	padding-top:40px;
+}
+
+/* 로그인컨테이너 */
+header div.login-container{width:250px; position:absolute; right: 0px; top: 10px;}
+
+#loginFrm table{empty-cells:hide;}
+#loginFrm input[type=submit]{width:60px; height:50px; color:white; background:#B89B88; position:absolute; top:10px;}
+#saveId+label{font-size:12px;}
+
+/* 메뉴관련스타일 */
+header nav {background:#E8D6C3; width:100%; margin-top:40px;}
+
+/* ul태그의 가운데정렬 */
+ul.main-nav{
+	/* width:80%; */
+	display:table;
+	padding:0px;
+	margin:auto;
+}
+ul.main-nav li { 
+	list-style-type: none; 
+	width: 8em; 
+	height: 2em;
+	float: left; 
+	text-align: center; 
+	border-left: 1px #E8D6C3 solid;
+	background-color: #E8D6C3; 
+}
+ul.main-nav li:last-of-type{border-right:1px #E8D6C3 solid;;}
+ul.main-nav li a {
+	display: block;
+	padding:.5em;
+	text-decoration: none;
+	color: #292929;
+}
+
+/* hover시 배경색 변경 */
+ul.main-nav li:hover{
+	background-color: #B89B88;
+}
+ul.main-nav li:hover > a{
+	color:#FFF; /* 글자색*/
+}
+ /* 회원가입페이지 */
+section#enroll-container {text-align:center;}
+section#enroll-container input{margin:3px;}
+section#enroll-container table{margin:0 auto;}
+section#enroll-container table th {padding:0 10px; text-align:right;}
+section#enroll-container table td {padding:0 10px; text-align:left;}
+
+section#memberList-container {text-align:center;}
+    
+section#memberList-container table#tbl-member {width:100%; border:1px solid gray; border-collapse:collapse;}
+section#memberList-container table#tbl-member th, table#tbl-member td {border:1px solid gray; padding:10px; }
