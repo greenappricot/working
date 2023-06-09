@@ -42,7 +42,7 @@ public class NoticeDao {
 	public List<Notice> selectNotice(Connection conn, int cPage, int numPerpage){
 		PreparedStatement pstmt=null;
 		ResultSet rs=null;
-		List<Notice> list=new ArrayList();
+		List<Notice> list=new ArrayList<Notice>();
 		try {
 			pstmt=conn.prepareStatement(sql.getProperty("selectNotice"));
 			pstmt.setInt(1, (cPage-1)*numPerpage+1);

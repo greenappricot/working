@@ -15,7 +15,7 @@ body *>a, body *>input {
 }
 
 div#container{
-	background-color:#F0F0F0;
+	/* background-color:#F0F0F0; */
 	width:100%;
 	margin:0 auto;
 }

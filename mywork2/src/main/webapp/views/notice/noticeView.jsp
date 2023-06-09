@@ -20,8 +20,9 @@
             <th>첨부파일</th>
             <td>
            		<%if(n.getFilePath()!=null){ %>
-           			<img src="<%=request.getContextPath()%>/images/file.png"
-           			width="20">
+           			<div id="download-container" onclick="fileDownload('<%=n.getFilePath() %>');">
+	           			<img src="<%=request.getContextPath()%>/images/file.png" width="20"><span><%=n.getFilePath() %></span>
+           			</div>
            		<%} %>
             </td>
         </tr>
@@ -40,13 +41,22 @@
 	        </tr>
         <%} %>
     </table>
+    <script>
+    	const fileDownload=(filename)=>{
+    		// alert("파일 다운로드");
+    		// 다운로드 요청 보내기 -> file에 대한 정보를 location으로 보낸다. -> 매개변수로 파일명을 받는다.
+			location.assign("<%=request.getContextPath()%>/fileDownload.do?name="+filename); 		
+    	}
+    </script>
 </section>
-
-    <style>
-    section#notice-container{width:600px; margin:0 auto; text-align:center;}
+<style>
+    section#notice-container{width:600px; margin:3% auto; text-align:center;}
     section#notice-container h2{margin:10px 0;}
-    table#tbl-notice{width:500px; margin:0 auto; border:1px solid black; border-collapse:collapse; clear:both; }
+    table#tbl-notice{width:500px; margin:2% auto; border:1px solid black; border-collapse:collapse; clear:both; }
     table#tbl-notice th {width: 125px; border:1px solid; padding: 5px 0; text-align:center;} 
     table#tbl-notice td {border:1px solid; padding: 5px 0 5px 10px; text-align:left;}
-    </style>
+    div#download-container {
+    	cursor:pointer;
+    }
+</style>
 <%@ include file="/views/common/footer.jsp"%>
