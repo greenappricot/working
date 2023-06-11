@@ -15,6 +15,7 @@
 	section#board-container h2
 	{
 		margin:10px 0;
+		text-align:center;
 	}
 	table#tbl-board
 	{
@@ -42,37 +43,8 @@
 </style>
 <script>
 </script>
-
 <section id='board-container'>
-	<%if(b==null) {%>
-		<h2>게시판 등록하기</h2>
-		<form action='' >
-			<table id='tbl-board'>
-				<tr>
-					<th>제목</th>
-					<td><input type="text" name="boardTitle"></td>
-				</tr>
-				<tr>
-					<th>작성자</th>
-					<td><input type="text" name="boardWriter"></td>
-				</tr>
-				<tr>
-					<th>첨부파일</th>
-					<td><input type="text" name="file"></td>
-				</tr>
-				<tr>
-					<th>내용</th>
-					<td><textarea cols="40" rows="5" name="boardContent"></textarea></td>
-				</tr>
-				<tr>
-					<th colspan="2">
-						<button name="submit">등록하기</button>
-					</th>
-				</tr>
-			</table>
-		</form>
-	<%}else{ %>
-		<h2>게시판 수정</h2>
+	<h2>게시판 수정</h2>
 	<form action='' >
 		<table id='tbl-board'>
 			<%if(b!=null){ %>
@@ -100,6 +72,5 @@
 			<%} %>
 		</table>
 	</form>
-	<%} %>
 </section>
 <%@ include file="/views/common/footer.jsp"%>

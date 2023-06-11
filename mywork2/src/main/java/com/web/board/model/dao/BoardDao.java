@@ -139,6 +139,20 @@ public class BoardDao {
 		}return list;
 	}
 	
+	public int insertBoardCommentReply(Connection conn, int boardNo, int boardCommentRef) {
+		int result=0;
+		PreparedStatement pstmt=null;
+		try {
+			pstmt=conn.prepareStatement(sql.getProperty("insertBoardCommentReply"));
+			result=pstmt.executeUpdate();
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}finally {
+			close(pstmt);
+		}
+		return result;
+	}
+	
 	private BoardComment getBoardComment(ResultSet rs) throws SQLException {
 		return BoardComment.builder()
 				.boardCommentNo(rs.getInt("BOARD_COMMENT_NO"))

@@ -46,6 +46,18 @@ public class BoardService {
 		return b;
 	}
 	
+	public Board selectBoard(int boardNo) {
+		Connection conn=getConnection();
+		Board b=dao.selectBoardByNo(conn,boardNo);
+		int result=dao.updateBoardReadCount(conn,boardNo);
+			if(result>0) {
+				commit(conn);
+			}
+			else rollback(conn);
+		close(conn);
+		return b;
+	}
+	
 	public int insertBoardComment(BoardComment bc) {
 		Connection conn=getConnection();
 		int result=dao.insertBoardComment(conn,bc);
@@ -61,6 +73,22 @@ public class BoardService {
 		close(conn);
 		return list;
 	}
+	
+	public int insertBoardCommentReply(int boardNo, int boardCommentRef) {
+		Connection conn=getConnection();
+		int result=dao.insertBoardCommentReply(conn, boardNo,boardCommentRef);
+		if(result>0) commit(conn);
+		else rollback(conn);
+		close(conn);
+		return result;
+	}
+	
+//	public BoardComment selectBoardCommentReply(int boardNo, int boardCommentRef) {
+//		Connection conn=getConnection();
+//		BoardComment bc=dao.selectBoardCommentReply(conn, boardNo,boardCommentRef);
+//		close(conn);
+//		return bc;
+//	}
 	
 	
 }

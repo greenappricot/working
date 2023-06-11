@@ -34,6 +34,7 @@
     /*답글관련*/
     table#tbl-comment textarea{margin: 4px 0 0 0;}
     table#tbl-comment button.btn-insert2{width:60px; height:23px; color:white; background:#3300ff; position:relative; top:-5px; left:10px;}
+    .comment-editor button{margin-left:15px;}
 </style>
 <section id="board-container">
 		<h2>게시판</h2>
@@ -75,7 +76,7 @@
 			<%-- <%if(loginMember!=null&&(loginMember.getUserId().equals("admin")||loginMember.getUserId().equals(b.getBoardWriter()))) {%> --%>
 				<tr>
 					<th colspan="2">
-						<button name="update" onclick="<%=request.getContextPath()%>/board/updateBoard.do?boardNo=<%=b.getBoardNo()%>">수정하기</button>
+						<button name="update" onclick="location.assign('<%=request.getContextPath()%>/board/updateBoard.do?boardNo=<%=b.getBoardNo()%>')">수정하기</button>
 						<button name="delete">삭제하기</button>
 					</th>
 				</tr>
@@ -84,7 +85,7 @@
 		<div id="comment-container">
 			<div class="comment-editor">
 				<form action="<%=request.getContextPath() %>/board/insertComment.do" method="post">
-					<textarea name="boardCommentContent" cols="55" rows="2"></textarea>
+					<textarea name="boardCommentContent" cols="50" rows="2"></textarea>
 					<input type="hidden" name="boardRef" value="<%=b.getBoardNo()%>">
 					<input type="hidden" name="level" value="1">
 					<input type="hidden" name="boardCommentWriter" value="<%=loginMember!=null?loginMember.getUserId():""%>"><!-- loginMember로 접근제한 필터처리 했기 때문에 이렇게 접근해야함  -->
@@ -104,11 +105,12 @@
 							<%=bc.getBoardCommentContent() %>
 						</td>
 						<td>
-							<button class="btn-reply" 
-							onclick="location.assign('<%=request.getContextPath()%>/board/insertReplyComment.do?boardNo='+<%=b.getBoardNo()%>&boardCommentRef='+<%=bc.getBoardCommentRef()%>')">답글</button>
+							<button class="btn-reply" onclick="location.assign('<%=request.getContextPath()%>/board/insertReplyComment.do?boardNo='+<%=b.getBoardNo()%>&boardCommentRef='+<%=bc.getBoardCommentRef()%>')">답글</button>
 							<!-- 작성자일때만 노출 -->
-							<button class="btn-reply" name="update">수정</button>
-							<button class="btn-reply" name="delete">삭제</button>
+							<%if(loginMember!=null&&(loginMember.getUserId()).equals(bc.getBoardCommentWriter())){ %>
+								<button class="btn-reply" name="update">수정</button>
+								<button class="btn-reply" name="delete">삭제</button>
+							<%} %>
 						</td>
 					</tr>
 				<%}

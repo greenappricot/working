@@ -1,11 +1,15 @@
 package com.web.board.controller;
 
 import java.io.IOException;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.web.board.model.service.BoardService;
+import com.web.board.model.vo.Board;
 
 /**
  * Servlet implementation class UpdateBoardServlet
@@ -29,6 +33,9 @@ public class UpdateBoardServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		// board 수정
 		int boardNo=Integer.parseInt(request.getParameter("boardNo"));
+		Board b= new BoardService().selectBoard(boardNo);
+		request.setAttribute("board",b);
+		request.getRequestDispatcher("/views/board/insertboard.jsp").forward(request, response);
 	}
 
 	/**

@@ -51,13 +51,15 @@
         </div>
     </section>
  <style>
-    section#notice-container{width:600px; margin:0 auto; text-align:center;}
+    section#notice-container{width:600px; margin:2% auto; text-align:center;}
     section#notice-container h2{margin:10px 0;}
-    table#tbl-notice{width:100%; margin:0 auto; border:1px solid black; border-collapse:collapse;}
+    table#tbl-notice{width:100%; margin:5% auto; border:1px solid black; border-collapse:collapse;}
     table#tbl-notice th, table#tbl-notice td {border:1px solid; padding: 5px 0; text-align:center;} 
     section#notice-container>div:first-of-type{
     	display:flex;
     	justify-content:end;
     }
+    section#notice-container a{
+    text-decoration:none; color:black;}
 </style>
 <%@ include file="/views/common/footer.jsp"%>
