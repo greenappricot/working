@@ -73,22 +73,15 @@ public class BoardService {
 		close(conn);
 		return list;
 	}
-	
-	public int insertBoardCommentReply(int boardNo, int boardCommentRef) {
-		Connection conn=getConnection();
-		int result=dao.insertBoardCommentReply(conn, boardNo,boardCommentRef);
-		if(result>0) commit(conn);
-		else rollback(conn);
-		close(conn);
-		return result;
-	}
-	
-//	public BoardComment selectBoardCommentReply(int boardNo, int boardCommentRef) {
+//	
+//	public int insertBoardCommentReply(int boardNo, int boardCommentRef) {
 //		Connection conn=getConnection();
-//		BoardComment bc=dao.selectBoardCommentReply(conn, boardNo,boardCommentRef);
+//		int result=dao.insertBoardCommentReply(conn, boardNo,boardCommentRef);
+//		if(result>0) commit(conn);
+//		else rollback(conn);
 //		close(conn);
-//		return bc;
+//		return result;
 //	}
-	
+//	
 	
 }

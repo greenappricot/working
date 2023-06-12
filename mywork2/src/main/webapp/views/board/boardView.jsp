@@ -21,9 +21,11 @@
     table#tbl-comment tr td:first-of-type{padding: 5px 5px 5px 50px;}
     table#tbl-comment tr td:last-of-type {text-align:right; width: 100px;}
     table#tbl-comment button.btn-reply{display:none;}
+    table#tbl-comment button.btn-update{display:none;}
     table#tbl-comment button.btn-delete{display:none;}
     table#tbl-comment tr:hover {background:lightgray;}
     table#tbl-comment tr:hover button.btn-reply{display:inline;}
+    table#tbl-comment  tr:hover button.btn-update{display:inline;}
     table#tbl-comment tr:hover button.btn-delete{display:inline;}
     table#tbl-comment tr.level2 {color:gray; font-size: 14px;}
     table#tbl-comment sub.comment-writer {color:navy; font-size:14px}
@@ -96,24 +98,43 @@
 		</div>
 		<table id="tbl-comment">
 			<%if(comments!=null){
-				for(BoardComment bc: comments){%>
-					<tr class="level1">
-						<td>
-							<sub class="comment-writer"><%=bc.getBoardCommentWriter() %></sub>
-							<sub class="comment-date"><%=bc.getBoardCommentDate() %></sub>
-							<br>
-							<%=bc.getBoardCommentContent() %>
-						</td>
-						<td>
-							<button class="btn-reply" onclick="location.assign('<%=request.getContextPath()%>/board/insertReplyComment.do?boardNo='+<%=b.getBoardNo()%>&boardCommentRef='+<%=bc.getBoardCommentRef()%>')">답글</button>
-							<!-- 작성자일때만 노출 -->
-							<%if(loginMember!=null&&(loginMember.getUserId()).equals(bc.getBoardCommentWriter())){ %>
-								<button class="btn-reply" name="update">수정</button>
-								<button class="btn-reply" name="delete">삭제</button>
-							<%} %>
-						</td>
-					</tr>
-				<%}
+				for(BoardComment bc: comments){
+					if(bc.getLevel()==1){%>
+						<tr class="level1">
+							<td>
+								<sub class="comment-writer"><%=bc.getBoardCommentWriter() %></sub>
+								<sub class="comment-date"><%=bc.getBoardCommentDate() %></sub>
+								<br>
+								<%=bc.getBoardCommentContent() %>
+							</td>
+							<td>
+								<!-- 필요한 데이터를 속성으로 받아서 둘 수 있다. -->
+								<%if(loginMember!=null){ %><button class="btn-reply" value="<%=bc.getBoardCommentNo() %>">답글</button>
+								<!-- 작성자일때만 노출 -->
+									<%if(loginMember!=null&&(loginMember.getUserId()).equals(bc.getBoardCommentWriter())){ %>
+										<button class="btn-update" name="update">수정</button>
+										<button class="btn-delete" name="delete">삭제</button>
+									<%} 
+								}%>
+							</td>
+						</tr>
+					<%}else{%>
+						<tr class="level2">
+							<td>
+								<sub class="comment-writer"><%=bc.getBoardCommentWriter() %></sub>
+								<sub class="comment-date"><%=bc.getBoardCommentDate() %></sub>
+								<br>
+								<%=bc.getBoardCommentContent() %>
+							</td>
+							<td>
+								<%if(loginMember!=null&&(loginMember.getUserId()).equals(bc.getBoardCommentWriter())){ %>
+										<button class="btn-update" name="update">수정</button>
+										<button class="btn-delete" name="delete">삭제</button>
+									<%} %>
+							</td>
+						</tr>
+					<%}
+				}
 			}%>
 		</table>
 </section>
@@ -125,5 +146,24 @@
 			$("#userId").focus();
 		}
 	});
+	//$(".btn-reply").one("click",e=>{
+	$(".btn-reply").click(e=>{
+	
+		const tr=$("<tr>");
+		const td=$("<td>").attr("colspan","2");
+		const boardCommentRef=$(e.target).val(); // value값으로 넣은 boardCommentNo를 가져온다.
+		const form= $(".comment-editor>form").clone(true); // 댓글 등록하는 form태그 복사
+		// console.log(form.find("textarea")); find 선택자를 이용해서 후손 까지의 범위에서 가져온 element의 속성을 변경할 수 있다.
+		form.find("textarea").attr("rows","1");
+		form.find("input[name=level]").val("2");
+		form.find("input[name=boardCommentRef]").val(boardCommentRef);
+		td.css("display","none");
+		td.append(form);
+		tr.append(td);
+		//$(e.target).parents("tr").after(tr.children("td").slideDown(800));
+		tr.insertAfter($(e.target).parents("tr")).children("td").slideDown(800);
+		$(e.target).off("click"); // click이벤트 지워버리기
+	})
+	
 </script>
 <%@ include file="/views/common/footer.jsp"%>
