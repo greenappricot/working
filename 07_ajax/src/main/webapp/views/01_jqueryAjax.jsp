@@ -177,6 +177,127 @@
 		});
 	</script>
 	
+	<!-- 0613 수업내용 -->
+	<h2>html 페이지를 받아서 처리하기</h2><!-- ajax로 응답 하면 page로 응답한다 -->
+	<button id="btnHtml">html 페이지 받아오기</button>
+	<div id="htmlContainer"></div>
+	
+	<script>
+		// $("#btnHtml").click(function(e)=>{ 동일
+		$("#btnHtml").click(e=>{
+			$.ajax({
+				url:"<%=request.getContextPath()%>/ajax/htmlTest.do",
+				dataType:"html",
+				success:function(data){
+					console.log(data);
+					$("#htmlContainer").html(data);
+				}
+			})
+		});
+	</script>
+	
+	<h2>xml 파일을 가져와서 처리하기</h2>
+	<button id="btnXml">xml 파일 가져오기</button>
+	<div id="xmlContainer"></div>
+	
+	<script>
+		$("#btnXml").click(e=>{
+			$.get("<%=request.getContextPath()%>/test/books.xml",function(data){
+				// console.log($(data));
+				const root=$(data).find(":root"); // ":root" 최상위 태그 찾을 수 있다.
+				console.log(root); // <books> 
+				// const books=root[0].children; 210 row와 같은 결과
+				const books=root.children();
+				// console.log(books);
+				
+				const $table=$("<table>");
+				const $header="<tr><th>구분</th><th>제목</th><th>작가</th></tr>";
+				$table.html($header);
+				
+				books.each(function(i,e){ // index, element, origin값이 나옴
+					// console.log(e); book 배열 나옴
+					const $tr=$("<tr>");
+					//let val=$(e).find("subject").text(); // book 자손 중 subject를 찾아서 textnode 값을 변수에 저장했다.
+					//const subject=$("<td>").text(val);
+						const $subject=$("<td>").text($(e).find("subject").text());
+						const $title=$("<td>").text($(e).find("title").text());
+						const $writer=$("<td>").text($(e).find("writer").text());
+					
+					$tr.append($subject).append($title).append($writer);
+					$table.append($tr);
+				});
+				$("#xmlContainer").html($table);				
+			});
+		});
+		
+	</script>
+	
+	 <!-- ajax 이용해서 db와 연결해서 연관 검색어 기능 만들기 -->
+	<h2>서버에서 보낸 데이터 활용하기</h2>
+	<input type="search" id="userId" list="data"> <!-- 밑에 추천으로 나옴 -->
+	<button id="searchMember">아이디 검색</button>
+	<datalist id="data">
+		<!-- <option value="test">test</option>
+		<option value="test1">test1</option>
+		<option value="test2">test2</option> --> <!-- << ajax로 이거 구현 예정 -->
+	</datalist>
+	<div id="memberList"></div>
+	<div id="pageBar">
+		<%=request.getAttribute("pageBar") %>
+	</div>
+	<script>
+		$("#pageBar>span").click(e=>{
+			$.get("<%=request.getContextPath()%>/searchMember.do?cPage="+$(e.target).text(),(data)=>{
+				
+			});
+		});
+		
+	
+		$("#userId").keyup(e=>{
+			$.get("<%=request.getContextPath()%>/searchId.do?id="+$(e.target).val(), function(data){
+				//console.log(data);
+				$("#data").html('');
+				const userIds=data.split(",");
+				console.log(userIds); // 입력한 글자가 포함된 아이디가 배열로 나온다.
+				userIds.forEach(e=>{
+					const option = $("<option>").attr("value",e).text(e);
+					$("#data").append(option);
+				});
+			});		
+		});
+		$("#searchMember").click(e=>{
+			$.get("<%=request.getContextPath()%>/searchMember.do",
+					data=>{
+						
+						const pageBar=data.split("<span>");
+						const members=data.split("\n");
+						const table=$("<table>"); 
+						// document.createElement("table");
+						// const header=$("<tr><th>아이디</th><th>이름</th><th>성별</th><th>나이</th><th>전화번호</th><th>이메일</th><th>주소</th><th>취미</th><th>가입일</th></tr>");
+						// 대신 배열 순회하면서 값을 넣을 수 있다. 
+						const header=$("<tr>");
+						const headerData=['아이디','이름','성별','나이','전화번호','이메일','주소','취미','가입일'];
+						headerData.forEach(e=>{
+							const th=$("<th>").text(e);
+							header.append(th);
+						});						
+						table.append(header);
+						//console.log(members);
+						members.forEach(e=>{
+							const member=e.split("$");
+							//console.log(member);
+							const tr=$("<tr>");
+							member.forEach(m=>{
+								tr.append($("<td>").text(m));							
+							});
+							table.append(tr);
+						});
+						$("#memberList").html(table);
+						//$("#memberList").html(data); 
+					});
+		});
+			
+	</script>
 	
 </body>
 </html>
