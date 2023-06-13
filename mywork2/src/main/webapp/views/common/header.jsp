@@ -34,15 +34,12 @@
 					<table>
 						<tr>
 							<td>
-								<input type="text" name="userId"
-								id="userId" placeholder="아이디"
-								value="<%=saveId!=null?saveId:""%>">
+								<input type="text" name="userId" id="userId" placeholder="아이디" value="<%=saveId!=null?saveId:""%>">
 							</td>
 						</tr>
 						<tr>
 							<td>
-								<input type="password" name="password"
-								id="password" placeholder="패스워드">
+								<input type="password" name="password" id="password" placeholder="패스워드">
 							</td>
 							<td>
 								<input type="submit" value="로그인">
@@ -50,11 +47,9 @@
 						</tr>
 						<tr>
 							<td>
-								<input type="checkbox" name="saveId"
-								id="saveId" <%=saveId!=null?"checked":"" %>>
+								<input type="checkbox" name="saveId" id="saveId" <%=saveId!=null?"checked":"" %>>
 								<label for="saveId">아이디저장</label>
-								<input type="button" value="회원가입"
-								onclick="location.assign('<%=request.getContextPath()%>/member/enrollMember.do')">
+								<input type="button" value="회원가입" onclick="location.assign('<%=request.getContextPath()%>/member/enrollMember.do')">
 							</td>
 						</tr>
 					</table>
@@ -80,7 +75,7 @@
 			</div>
 			<nav>
 				<ul class="main-nav">
-					<li class="home"><a href="">Home</a></li>
+					<li class="home"><a href="<%=request.getContextPath()%>">Home</a></li>
 					<li id="notice">
 						<a href="<%=request.getContextPath()%>/notice/noticeList.do">공지사항</a>
 					</li>

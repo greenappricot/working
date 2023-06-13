@@ -9,8 +9,7 @@
 			<tr>
 				<th>아이디</th>
 				<td>
-					<input type="text" placeholder="4글자이상" name="userId"
-					id="userId_">
+					<input type="text" placeholder="4글자이상" name="userId" id="userId_">
 					<input type="button" onclick="fn_duplicateId();" value="중복확인">					
 				</td>
 			</tr>
@@ -84,6 +83,43 @@
 	</form>
 </section>
 <script>
+	// 회원 가입할 때 id 입력할 때 중복 확인하기
+	$("#userId_").keyup(e=>{
+		if(e.target.value.length>=4){
+			$.ajax({
+				url:"<%=request.getContextPath()%>/ajaxIdDuplicate.do",
+				data:{"userId":$(e.target).val()},
+				success:function(data){
+					console.log(data, typeof data);
+					let msg="", css={};
+					if(data==='true'){ // data에서 String으로 가져오기 때문에 type까지 확인하는 === 비교연산자 이용해서 비교한다 
+						msg="사용 가능한 아이디입니다";
+						css={color:"green"};
+					}else{
+						msg="사용 불가능한 아이디입니다";
+						css={color:"red"};
+					}
+					const tr=$("<tr>");
+					const td=$("<td colspan='2'>").text(msg).css(css);
+					tr.append(td);
+					if($(e.target).parents("tr").next().find("input").length==0){
+						$(e.target).parents("tr").next().remove();
+					}
+					$(e.target).parents("tr").after(tr);
+				},
+				error:function(r,m){
+					console.log(r);
+					console.log(m);
+				}
+			});
+		}else{
+			if($(e.target).parents("tr").next().find("input").length==0){
+				$(e.target).parents("tr").next().remove();
+			}
+		}
+	});
+
+
 	function fn_validate2(){
 		const userId=$("#userId_").val();
 		if(userId.length<4){
