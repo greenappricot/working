@@ -44,7 +44,12 @@ public class GsonTestServlet extends HttpServlet {
 		response.setContentType("application/json; charset=UTF-8");
 		//gson.toJson(m,response.getWriter()); // 첫번째 멤버변수를 key값으로 쓴다.
 		gson.toJson(list,response.getWriter()); // list 보낼 때는 바로 list 보내도 됨 ㅠㅠ
+		
+		// json 형태로 전송된 데이터를 vo 객체로 만들어준다.
 		//gson.fromJson(String, null)
+		String data=request.getParameter("data");
+		Member requestData=gson.fromJson(data,Member.class); // data를 Member class로 변환해준다
+		System.out.println(requestData);
 		
 		
 		// fetch로 보낸 데이터 확인하기

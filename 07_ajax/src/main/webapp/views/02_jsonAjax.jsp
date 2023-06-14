@@ -36,11 +36,34 @@
 		});
 		
 		// gson 라이브러리 이용해서 데이터 가져오기
-		$("#gsonBtn").click(e=>{
+		<%-- $("#gsonBtn").click(e=>{
 			$.get("<%=request.getContextPath()%>/gsonTest.do",data=>{
 				console.log(data);
 			});
+		}); --%>
+		
+		// url주소에 get 방식으로 querystring으로 보내면 파싱하지 못해서 post 방식으로 보내야한다.
+		// stringify() <->
+		$("#gsonBtn").click(e=>{
+			$.post("<%=request.getContextPath()%>/gsonTest.do",
+					// member클래스의 멤버변수랑 이름 똑같이 불러와야함 
+					{data:JSON.stringify({
+						userId:"bsyoo",
+						password:"1234",
+						userName:"유병승",
+						gender:"M",
+						age:19,
+						email:"teacherdev09@gmail.com",
+						phone:"01012",
+						address:"경기도시흥시",
+						enrollDate:"20230614"
+					})},
+					data=>{
+				
+			});
 		});
+		
+		
 		
 		// fetch 함수 이용해서 parsing해서 데이터 가져오기 
 		$("#jsonParse").click(e=>{
