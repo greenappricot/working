@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 
+	mapper 태그에 namespace 속성을 설정해야한다. 
+	namespace값은 session 객체가 sql문을 메소드에 의해 실행할 때 사용하는 mapper 구분 값이다.
+	내부적으로 insert 태그가 실행될 때 preparedStatement가 실행 된다
+-->
+<mapper namespace="student">
+	<!-- 
+		실행할 sql문에 맞는 태그를 선언하면 된다
+		<select><insert><update><delete>
+		sql문은 시작 태그와 끝 태그 사이에 작성, ;를 작성하지 않는다.
+	 -->
+	 <insert id="insertStudent">
+	 	INSERT INTO STUDENT VALUES (SEQ_STUDENT.NEXTVAL, '유병승','01012341234','YOO@YOO.COM','경기도 시흥시',DEFAULT)
+	 </insert>
+	 
+	 <!-- 
+		* 메소드 실행 시 매개변수 있는 경우
+		1. SQL 태그에 parameterType 속성을 이용해서 매개변수 타입을 설정한다. (자료형 타입에 주의해서 기입한다.)
+	 	2. 파라미터값은 #{매개변수이름}로 전달 받을 수 있다. **************** $ 쓰지 않기 주의 *****************
+	 -->
+	 <insert id="inserStudentByName" parameterType="string">
+	 	INSERT INTO STUDENT VALUES (SEQ_STUDENT.NEXTVAL, #{name}, '01012341234','YOO@YOO.COM','경기도 시흥시',DEFAULT)
+	 </insert>
+
+	 <!-- 파라미터로 객체를 넘긴 구문 -->	 
+	 <!-- 
+	 	type을 작성할 때 클래스를 작성하려면 패키지명까지 작성해야한다.
+	 	Student 객체에 있는 멤버 변수 명을 기입한다.
+	  -->
+	 <insert id="insertStudentAll" parameterType="com.mybatis.model.vo.Student">
+	 	INSERT INTO STUDENT VALUES (SEQ_STUDENT.NEXTVAL, #{studentName}, #{studentTel}, #{studentEmail}, #{studentAddress},DEFAULT)
+	 </insert>
+	 
+	 <update id="updateStudent" parameterType="com.mybatis.model.vo.Student">
+	 	UPDATE STUDENT SET STUDENT_NAME=#{studentName}, STUDENT_TEL=#{studentTel}, STUDENT_EMAIL=#{studentEmail}, STUDENT_ADDR=#{studentAddress} WHERE STUDENT_NO=#{studentNo}
+	 </update>
+	 
+	 <delete id="deleteStudent" parameterType="_int">
+	 	DELETE FROM STUDENT WHERE STUDENT_NO=#{no}
+	 </delete>
+	 
+	 <!--  
+	 	select문 실행하기
+	 	<select> 태그 이용하고 반드시 두 개의 속성을 작성해야 한다.
+	 	
+	 		1. id => sql문을 지칭하는 값
+	 		2. resultType || resultMap => query의 실행 결과를 반환할 타입을 지정한다.(dao에서 정해지지 않고 mapper에서 정해진다)
+	 			
+	 			resultType : java 코드로 작성되어 있는 타입들(기본 타입, 클래스 타입)
+	 			 resultMap : mybatis에서 <resultMap> 태그를 이용해서 만든 타입(mapper에서 중간 mapping하는 객체를 만들 수 있다)
+	 			
+	 		***** 기본적으로 컬럼명과 mapping할 java 클래스 필드명이 같으면 resultType을 사용하고, 다르면 resultMap을 만들어서 직접 매핑한다.
+	 			  클래스 간의 연관 관계를 설정했을 때(has a) 사용한다.
+	 -->
+	 <select id="selectStudentCount" resultType="_int">
+	 	SELECT COUNT(*) FROM STUDENT
+	 </select>
+	 
+	 
+	 <!-- <select id="selectStudentByNo" resultType="com.mybatis.model.vo.Student" parameterType="_int">
+	 
+	 	SELECT * FROM STUDENT WHERE STUDENT_NO=#{no}  필드명과 resultSet의 명칭을 비교해서 mapping하기 때문에 req_date만 결과 값이 나왔음 
+	 	-> RESULTSET의 이름을 ALIAS 사용해서 변경해준다. / 필드값이 많거나 select문 쓸 때마다 써야하니까 resultMap으로 만들어서 불러올 수 있다.
+	
+	 	SELECT STUDENT_NO AS STUDENTNO, 
+	 		STUDENT_NAME AS STUDENTNAME, 
+	 		STUDENT_TEL AS STUDENTTEL, 
+	 		STUDENT_EMAIL AS STUDENTEMAIL,
+	 		STUDENT_ADDR AS STUDENTADDRESS, 
+	 		REG_DATE 
+	 	FROM STUDENT WHERE STUDENT_NO=#{no}
+	 </select> -->
+	 
+	 <!-- 
+	 	vo 객체와 resultSet의 컬럼 이름이 불일치할 때 resultMap을 이용해서 맵핑시킬 수 있다. 
+	 	<resultMap id="구분값" type="java 객체 jdbc타입">
+	 		<id property="type에 설정된 객체의 필드명" column="resultSet의 컬럼명"> pk 컬럼에 부여
+	 		<result property="type에 설정된 객체의 필드명" column="resultSet의 컬럼명">
+	 		
+	 		<association> has a 관계로 하나의 리턴값을 가질 때
+	 		<collection> has a 관계로 여러 개 리턴값을 가질 때
+	 	</resultMap>
+	-->
+	<resultMap type="com.mybatis.model.vo.Student" id="studentMap">
+		<id property="studentNo" column="STUDENT_NO"/>
+		<result property="studentName" column="STUDENT_NAME"/>
+		<result property="studentTel" column="STUDENT_TEL"/>
+		<result property="studentEmail" column="STUDENT_EMAIL"/>
+		<result property="studentAddress" column="STUDENT_ADDR"/>
+	</resultMap>
+	
+	<select id="selectStudentByNo" resultMap="studentMap" parameterType="_int">
+		SELECT * FROM STUDENT WHERE STUDENT_NO=#{no}
+	</select>
+	
+	<select id="selectStudentAll" resultMap="studentMap">
+		SELECT * FROM STUDENT
+	</select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
