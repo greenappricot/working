@@ -1,11 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page import="com.web.board.model.vo.Board,
 java.util.List,com.web.board.model.vo.BoardComment" %>    
-<%
+<%-- <%
 	Board b=(Board)request.getAttribute("board");
 	List<BoardComment> comments=(List)request.getAttribute("comments");
-%>    
+%> --%>    
+<c:set var="path" value="${pageContext.request.contextPath}"/>
 <%@ include file="/views/common/header.jsp"%>
 <style>
  section#board-container{width:600px; margin:0 auto; text-align:center;}
@@ -43,19 +46,19 @@ java.util.List,com.web.board.model.vo.BoardComment" %>
 		<table id="tbl-board">
 			<tr>
 				<th>글번호</th>
-				<td><%=b.getBoardNo() %></td>
+				<td>${board.boardNo}</td>
 			</tr>
 			<tr>
 				<th>제 목</th>
-				<td><%=b.getBoardTitle() %></td>
+				<td>${board.boardTitle}</td>
 			</tr>
 			<tr>
 				<th>작성자</th>
-				<td><%=b.getBoardWriter() %></td>
+				<td>${board.boardWriter}</td>
 			</tr>
 			<tr>
 				<th>조회수</th>
-				<td><%=b.getBoardReadCount() %></td>
+				<td>${board.boardReadCount}</td>
 			</tr>
 			<tr>
 				<th>첨부파일</th>
@@ -65,70 +68,75 @@ java.util.List,com.web.board.model.vo.BoardComment" %>
 			</tr>
 			<tr>
 				<th>내 용</th>
-				<td><%=b.getBoardContent() %></td>
+				<td>${board.boardContent}</td>
 			</tr>
 			<%--글작성자/관리자인경우 수정삭제 가능 --%>
-			<%if(loginMember!=null&&
+			<c:if test="${not empty loginMember&&(loginMember.userId=='admin' ||loginMember.userId==board.boardWriter) }">
+		<%-- 	<%if(loginMember!=null&&
 			(loginMember.getUserId().equals("admin")
-			||loginMember.getUserId().equals(b.getBoardWriter()))) {%>
+			||loginMember.getUserId().equals(b.getBoardWriter()))) {%> --%>
 			<tr>
 				<th colspan="2">
 					<button>수정하기</button> <button>삭제하기</button>
 				</th>
 			</tr>
-			<%} %>
+			</c:if>
 		</table>
 		<div id="comment-container">
 			<div class="comment-editor">
-				<form action="<%=request.getContextPath() %>/board/insertComment.do" 
+				<form action="${path }/board/insertComment.do" 
 				method="post">
 					<textarea name="content" cols="55" rows="3"></textarea>
-					<input type="hidden" name="boardRef" value="<%=b.getBoardNo()%>">
+					<input type="hidden" name="boardRef" value="${board.boardNo }">
 					<input type="hidden" name="level" value="1">
-					<input type="hidden" name="boardCommentWriter" value="<%=loginMember!=null?loginMember.getUserId():""%>">
+					<input type="hidden" name="boardCommentWriter" value="${not empty loginMember?loginMember.userId:''}">
 					<input type="hidden" name="boardCommentRef" value="0">
 					<button	type="submit" id="btn-insert">등록</button>
 				</form>
 			</div>
 		</div>
 		<table id="tbl-comment">
-		<%if(comments!=null){ 
-			for(BoardComment bc:comments){
-			if(bc.getLevel()==1){%>
-				<tr class="level1">
-					<td>
-						<sub class="comment-writer"><%=bc.getBoardCommentWriter() %></sub>
-						<sub class="comment-date"><%=bc.getBoardCommentDate() %></sub>
-						<br>
-						<%=bc.getBoardCommentContent() %>
-					</td>
-					<td>
-						<%if(loginMember!=null){ %>
-						<button class="btn-reply" value="<%=bc.getBoardCommentNo() %>">답글</button>
-						
-						<button class="btn-update">수정</button>
-						<button class="btn-delete">삭제</button>
-						<%} %>
-					</td>
-				</tr>
-			<%}else{%> 
-				<tr class="level2">
-					<td>
-						<sub class="comment-writer"><%=bc.getBoardCommentWriter() %></sub>
-						<sub class="comment-date"><%=bc.getBoardCommentDate() %></sub>
-						<br>
-						<%=bc.getBoardCommentContent() %>
-					</td>
-					<td></td>
-				</tr>
-			<%}
-			}%>
-		<%} %>
+		<c:if test="${not empty comments }">
+			<c:forEach var="bc" items="comments">
+				<c:if test="${bc.level==1 }">
+					<tr class="level1">
+						<td>
+							<sub class="comment-writer">${bc.boardCommentWriter}</sub>
+							<sub class="comment-date"><fmt:formatDate value="${bc.boardCommentDate}"/></sub>
+							<br>
+							${bc.boardCommentContent }
+						</td>
+						<td>
+							<c:if test="${not empty loginMember }">
+							<button class="btn-reply" value="${bc.boardCommentNo}">답글</button>
+							
+							<button class="btn-update">수정</button>
+							<button class="btn-delete">삭제</button>
+							</c:if>
+						</td>
+					</tr>
+				</c:if>
+				</c:forEach>
+			</c:if>
+			<c:if test="${empty comments }">
+				<c:forEach items="${comments }" var="bd">
+					<tr class="level2">
+						<td>
+							<sub class="comment-writer">${bc.boardCommentWriter}</sub>
+							<sub class="comment-date">${bc.boardCommentDate}</sub>
+							<br>
+							${bc.boardCommentContent }
+						</td>
+						<td></td>
+					</tr>
+				</c:forEach>
+			</c:if>
 		</table>   
     </section>
     <script>
+    var loginMember=${loginMember}
     	$("#comment-container textarea[name=content]").focus(e=>{
-    		if(<%=loginMember==null%>){
+    		if(loginMember==null){
     			alert("로그인 후 이용할 수 있습니다.");
     			$("#userId").focus();
     		}

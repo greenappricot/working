@@ -36,7 +36,6 @@ public class MemberViewServlet extends HttpServlet {
 		String userId=request.getParameter("userId");
 		//1. DB에서 로그인한 회원의 정보를 가져와서 화면에 전달.
 		Member m=new MemberService().selectByUserId(userId);
-		
 		try {
 			m.setEmail(AESEncryptor.decryptData(m.getEmail()));
 		}catch(Exception e) {

@@ -1,20 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%
-	Member infoMember=(Member)request.getAttribute("infoMember");
-	String[] checkData=new String[5];
-	if(infoMember.getHobby()!=null){
-		for(String h : infoMember.getHobby()){
-			switch(h){
-				case "운동" : checkData[0]="checked";break;
-				case "등산" : checkData[1]="checked";break;
-				case "독서" : checkData[2]="checked";break;
-				case "게임" : checkData[3]="checked";break;
-				case "여행" : checkData[4]="checked";break;
-			}
-		}
-	}
-%>    
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<c:set var="path" value="${pageContext.request.contextPath }"/>
 <%@ include file="/views/common/header.jsp"%>
 <section id=enroll-container>
 		<h2>회원 정보 수정</h2>
@@ -23,8 +11,7 @@
 				<tr>
 					<th>아이디</th>
 					<td>
-						<input type="text" name="userId" id="userId_" 
-						value="<%=infoMember.getUserId()%>" readonly>
+						<input type="text" name="userId" id="userId_" value="${infoMember.userId}" readonly>
 					</td>
 				</tr>
 				<!-- <tr>
@@ -42,61 +29,54 @@
 				<tr>
 					<th>이름</th>
 					<td>	
-					<input type="text"  name="userName" id="userName" 
-					value="<%=infoMember.getUserName()%>" required><br>
+					<input type="text"  name="userName" id="userName"  value="${infoMember.userName}" required><br>
 					</td>
 				</tr>
 				<tr>
 					<th>나이</th>
 					<td>	
-					<input type="number" name="age" id="age"
-					value="<%=infoMember.getAge()%>"><br>
+					<input type="number" name="age" id="age" value="${infoMember.age}"><br>
 					</td>
 				</tr> 
 				<tr>
 					<th>이메일</th>
 					<td>	
-						<input type="email" placeholder="abc@xyz.com" name="email" id="email"
-						value="<%=infoMember.getEmail()%>"><br>
+						<input type="email" placeholder="abc@xyz.com" name="email" id="email" value="${infoMember.email}"><br>
 					</td>
 				</tr>
 				<tr>
 					<th>휴대폰</th>
 					<td>	
-						<input type="tel" placeholder="(-없이)01012345678" name="phone" id="phone" maxlength="11"
-						value="<%=infoMember.getPhone()%>"><br>
+						<input type="tel" placeholder="(-없이)01012345678" name="phone" id="phone" maxlength="11" value="${infomember.phone}"><br>
 					</td>
 				</tr>
 				<tr>
 					<th>주소</th>
 					<td>	
-						<input type="text" placeholder="" name="address" id="address" 
-						value="<%=infoMember.getAddress()%>"><br>
+						<input type="text" placeholder="" name="address" id="address" value="${infoMember.address}"><br>
 					</td>
 				</tr>
 				<tr>
 					<th>성별 </th>
 					<td>
-							<input type="radio" name="gender" id="gender0" value="M" 
-							<%=infoMember.getGender()=='M'?"checked":"" %>>
-							<label for="gender0">남</label>
-							<input type="radio" name="gender" id="gender1" value="F"
-							<%=infoMember.getGender()=='F'?"checked":"" %>>
-							<label for="gender1">여</label>						
+						<input type="radio" name="gender" id="gender0" value="M"  ${String.valueOf(infoMember.gender)=="M"?"checked":""}>
+						<label for="gender0">남</label>
+						<input type="radio" name="gender" id="gender1" value="F" ${String.valueOf(infoMember.gender)=="F"?"checked":""}>
+						<label for="gender1">여</label>				
 					</td>
 				</tr>
-				<tr>
+				<%-- <tr>
 					<th>취미 </th>
 					<td>
-						<input type="checkbox" name="hobby" id="hobby0" value="운동" <%=checkData[0] %>><label for="hobby0">운동</label>
-						<input type="checkbox" name="hobby" id="hobby1" value="등산" <%=checkData[1] %>><label for="hobby1">등산</label>
-						<input type="checkbox" name="hobby" id="hobby2" value="독서" <%=checkData[2] %>><label for="hobby2">독서</label><br />
-						<input type="checkbox" name="hobby" id="hobby3" value="게임" <%=checkData[3] %>><label for="hobby3">게임</label>
-						<input type="checkbox" name="hobby" id="hobby4" value="여행" <%=checkData[4] %>><label for="hobby4">여행</label><br />
+						<input type="checkbox" name="hobby" id="hobby0" value="운동" ${infoMember.hobby.contains("운동")?'checked':''}><label for="hobby0">운동</label>
+						<input type="checkbox" name="hobby" id="hobby1" value="등산" ${infoMember.hobby.contains("등산")?'checked':''}><label for="hobby1">등산</label>
+						<input type="checkbox" name="hobby" id="hobby2" value="독서" ${infoMember.hobby.contains("독서")?'checked':''}><label for="hobby2">독서</label><br />
+						<input type="checkbox" name="hobby" id="hobby3" value="게임" ${infoMember.hobby.contains("게임")?'checked':''}><label for="hobby3">게임</label>
+						<input type="checkbox" name="hobby" id="hobby4" value="여행" ${infoMember.hobby.contains("여행")?'checked':''}><label for="hobby4">여행</label><br />
 						
 
 					</td>
-				</tr>
+				</tr> --%>
 			</table>
 			<input type="button" onclick="fn_updatePassword();" value="비밀번호수정"/>
 			<input type="button" onclick="fn_updateMember();" value="정보수정"/>
@@ -106,12 +86,12 @@
 	<script>
 		const fn_updatePassword=()=>{
 			//새창으로 패스워드 변경하자.
-			open("<%=request.getContextPath()%>/member/passwordUpdate.do?userId=<%=loginMember.getUserId()%>",
+			open(${path}+"/member/passwordUpdate.do?userId="+${loginMember.userId},
 					"_blank","width=400,height=210");
 		}
 		const fn_updateMember=()=>{
 			//form전송하기
-			$("#memberFrm").attr("action","<%=request.getContextPath()%>/member/updateEndMemeber.do").submit();
+			$("#memberFrm").attr("action",${path}+"/member/updateEndMemeber.do").submit();
 		}
 	</script>
 	

@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="path" value="${pageContext.request.contextPath }"/>
 <%@ include file="/views/common/header.jsp" %>
 <section id="enroll-container">
 	<h2>회원 가입 정보 입력</h2>
@@ -108,7 +110,7 @@
 	const fn_duplicateId=()=>{
 		const userId=$("#userId_").val();
 		if(userId.length>=4){
-			open("<%=request.getContextPath()%>/member/idDuplicate.do?userId="+userId,
+			open(${path}+"/member/idDuplicate.do?userId="+userId,
 				"_blank","width=300, height=200");
 		}else{
 			alert('아이디는 4글자이상 입력하세요!');	
@@ -118,7 +120,7 @@
 	$("#userId_").keyup(e=>{
 		if(e.target.value.length>=4){
 			$.ajax({
-				url:"<%=request.getContextPath()%>/ajaxDuplicateId.do",
+				url:${path}+"/ajaxDuplicateId.do",
 				data:{"userId":$(e.target).val()},//userId=$(e.target).val()&..
 				success:function(data){
 					console.log(data,typeof data);

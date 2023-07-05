@@ -1,11 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="java.util.List,java.io.*" %>    
-<%
+<%-- <%
 	List<Member> members=(List)request.getAttribute("members");	
 	String type=request.getParameter("searchType");
 	String keyword=request.getParameter("searchKeyword");
-%>    
+%>   --%>  
+<c:set var="path" value="${pageContext.request.contextPath }"/>
 <%@ include file="/views/common/header.jsp"%>
 <style type="text/css">
     section#memberList-container {text-align:center;}
@@ -38,42 +40,40 @@
          <div id="search-container">
         	검색타입 : 
         	<select id="searchType">
-        		<option value="userId" <%=type!=null&&type.equals("userId")?"selected":"" %>>아이디</option>
+        		<%-- <option value="userId" <%=type!=null&&type.equals("userId")?"selected":"" %>>아이디</option>
         		<option value="userName" <%=type!=null&&type.equals("userName")?"selected":"" %>>회원이름</option>
-        		<option value="gender" <%=type!=null&&type.equals("gender")?"selected":"" %>>성별</option>
+        		<option value="gender" <%=type!=null&&type.equals("gender")?"selected":"" %>>성별</option> --%>
+        		<option value="userId" ${not empty type&&type==loginMember.userId?'selected':''}>아이디</option>
+        		<option value="userName" ${not empty type&&type==loginMember.userName?'selected':''}>회원이름</option>
+        		<option value="gender" ${not empty type&&type==loginMember.gender?'selected':''}>성별</option>
         	</select>
         	<div id="search-userId">
-        		<form action="<%=request.getContextPath()%>/admin/searchMember">
+        		<form action="${path }/admin/searchMember">
         			<input type="hidden" name="searchType" value="userId" >
-        			<input type="text" name="searchKeyword" size="25" 
-        			placeholder="검색할 아이디를 입력하세요" 
-        			value="<%=type!=null&&type.equals("userId")?keyword:"" %>">
+        			<input type="text" name="searchKeyword" size="25" placeholder="검색할 아이디를 입력하세요" value="${not empty type&& type==loginMember.userId?keyword:''}">
         			<button type="submit">검색</button>
         		</form>
         	</div>
         	<div id="search-userName">
-        		<form action="<%=request.getContextPath()%>/admin/searchMember">
+        		<form action="${path }/admin/searchMember">
         			<input type="hidden" name="searchType" value="userName">
-        			<input type="text" name="searchKeyword" size="25" 
-        			placeholder="검색할 이름을 입력하세요"
-        			value="<%=type!=null&&type.equals("userName")?keyword:"" %>">
+        			<input type="text" name="searchKeyword" size="25" placeholder="검색할 이름을 입력하세요" value="${not empty type&&type==loginMember.userName?keyword:''}">
         			<button type="submit">검색</button>
         		</form>
         	</div>
         	<div id="search-gender">
-        		<form action="<%=request.getContextPath()%>/admin/searchMember">
+        		<form action="${path }/admin/searchMember">
         			<input type="hidden" name="searchType" value="gender">
         			<label><input type="radio" name="searchKeyword" value="M" 
-        			<%=type!=null&&type.equals("gender")&&keyword!=null&&keyword.equals("M")?"checked":"" %>>남</label>
+        			${not empty type&&type==loginMember.gender?'checked':'' }>남</label>
         			<label><input type="radio" name="searchKeyword" value="F" 
-        			<%=type!=null&&type.equals("gender")&&keyword!=null&&keyword.equals("F")?"checked":"" %>>여</label>
+        				${not empty type&&type==loginMember.gender&&keyword=='F'?'checked':'' }>여</label>
         			<button type="submit">검색</button>
         		</form>
         	</div>
         </div>
         <div id="numPerpage-container">
         	페이지당 회원수 : 
-        	<%-- <form id="numPerFrm" action="<%=request.getContextPath()%>/admin/memberList.do"> --%>
         		<select name="numPerpage" id="numPerpage">
         			<option value="10">10</option>
         			<option value="5" >5</option>
@@ -97,59 +97,83 @@
               </tr>
           </thead>
           <tbody>
-          <%if(members.isEmpty()){ %>
+          <c:if test="${empty members }">
           		<tr>
           			<td colspan="9">조회된 회원이 없습니다</td>
           		</tr>
-          <%}else{
-          		for(Member m : members){%>
-          		<tr>
-          			<td><%=m.getUserId() %></td>
-          			<td><%=m.getUserName() %></td>
-          			<td><%=m.getGender() %></td>
-          			<td><%=m.getAge() %></td>
-          			<td><%=m.getEmail() %></td>
-          			<td><%=m.getPhone() %></td>
-          			<td><%=m.getAddress() %></td>
-          			<td><%=m.getHobby()!=null?String.join(",",m.getHobby()):"" %></td>
-          			<td><%=m.getEnrollDate() %></td>
-          		</tr>	
-          	<%}
-          	}%>
+          </c:if>
+          <c:if test="${not empty members }">
+          	<c:forEach items="${members }" var="m">
+          	<tr>
+          			<td>${m.userId}</td>
+          			<td>${m.userName}</td>
+          			<td>${m.gender}</td>
+          			<td>${m.age}</td>
+          			<td>${m.email}</td>
+          			<td>${m.phone}</td>
+          			<td>${m.address}</td>
+          			<td>${m.hobby}</td>
+          			<td>${m.enrollDate }</td>
+          		</tr>
+          	</c:forEach>	
+          </c:if>
           </tbody>
       </table>
       <div id="pageBar">
-      	<%=request.getAttribute("pageBar") %>
+      	${pageBar }
+<%--       	<%=request.getAttribute("pageBar") %> --%>
       </div>	
  </section>
  <script>
+	<%-- $("#numPerpage-container select").change(e=>{
+		const pageNum=$(e.target).val();
+		console.log(pageNum);
+		let url=location.href;
+			if(url.includes("?")){
+ 			url=url.substring(0,url.indexOf("?")+1)
+ 			+'searchType='+searchType
+ 			+'&searchKeyword='+keyword
+ 			+'&cPage=<%=request.getParameter("cPage")!=null
+ 				?request.getParameter("cPage"):1%>'
+ 			+'&numPerpage='+e.target.value;
+			}else{
+				url+='?';
+				url+='cPage=<%=request.getParameter("cPage")!=null
+				?request.getParameter("cPage"):1%>'
+ 			+'&numPerpage='+e.target.value;
+			}
+	}) --%>
+	 console.log(l);
  	$("#searchType").change(e=>{
  		const type=$(e.target).val();
  		$(e.target).parent().find("div").css("display","none");
  		$("#search-"+type).css("display","inline-block");
  	});
- 	$(()=>{
+ 	var searchType=$("#searchType option:selected");
+ 	var keyword=$("#search-userId input[name:searchKeyword]").val();
+ 	()=>{
  		$("#searchType").change();
- 		$("#numPerpage").change(e=>{
+ 		 $("#numPerpage-container select").change(e=>{
+ 			const pageNum=$(e.target).val();
  			let url=location.href;
  			if(url.includes("?")){
 	 			url=url.substring(0,url.indexOf("?")+1)
-	 			+'searchType=<%=type%>'
-	 			+'&searchKeyword=<%=keyword%>'
+	 			+'searchType='+searchType
+	 			+'&searchKeyword='+keyword
 	 			+'&cPage=<%=request.getParameter("cPage")!=null
 	 				?request.getParameter("cPage"):1%>'
-	 			+'&numPerpage='+e.target.value;
+	 			+'&numPerpage='+pageNum;
  			}else{
  				url+='?';
  				url+='cPage=<%=request.getParameter("cPage")!=null
  				?request.getParameter("cPage"):1%>'
-	 			+'&numPerpage='+e.target.value;
+	 			+'&numPerpage='+pageNum;
  			}
  			//console.log(url);
  			//url+='&numPerpage='+e.target.value;
  			location.assign(url);
  		});
- 	})
+ 	};
  	
  </script>
 <%@ include file="/views/common/footer.jsp"%>

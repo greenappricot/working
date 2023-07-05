@@ -1,9 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ page import="java.util.List,com.web.board.model.vo.Board" %>    
-<%
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page import="java.util.List,com.web.board.model.vo.Board" %>
+<c:set var="path" value="${pageContext.request.contextPath }"/>  
+<%-- <%
 	List<Board> boards=(List<Board>)request.getAttribute("boards");
-%>    
+%>   --%>  
 <%@ include file="/views/common/header.jsp"%>
 <style>
 	section#board-container{width:600px; margin:0 auto; text-align:center;}
@@ -27,35 +30,36 @@
 				<th>첨부파일</th>
 				<th>조회수</th>
 			</tr>
-			<%if(boards.isEmpty()){ %>
+			<c:if test="${empty boards }">
 				<tr>
 					<td colspan="6">조회된 데이터가 없습니다</td>
 				</tr>
-			<%}else{ 
-				for(Board b : boards){%>
-				<tr>
-					<td><%=b.getBoardNo() %></td>
-					<td>
-						<a href="<%=request.getContextPath()%>/board/boardView.do?no=<%=b.getBoardNo()%>">
-							<%=b.getBoardTitle() %>
-						</a>
-					</td>
-					<td><%=b.getBoardWriter() %></td>
-					<td><%=b.getBoardDate() %></td>
-					<td>
-						<%if(b.getBoardOriginalFilename()!=null){ %>
-							<img src="<%=request.getContextPath()%>/images/file.png"
-							width="20">
-						<%} %>
-					</td>
-					<td><%=b.getBoardReadCount() %></td>
-				</tr>
-				<%}
-				} %>
+			</c:if>
+			<c:if test="${not empty boards }">
+				<c:forEach items="${boards }" var="b">
+					<tr>
+						<td>${b.boardNo}</td>
+						<td>
+							<a href="${path }/board/boardView.do?no=${b.boardNo}">
+								${b.boardTitle }
+							</a>
+						</td>
+						<td>${b.boardWriter}</td>
+						<td>${b.boardDate}</td>
+						<td>
+							<c:if test="${not empty b.boardOriginalFilename }">
+								<img src="${path}/images/file.png"
+								width="20">
+							</c:if>
+						</td>
+						<td>${b.boardReadCount}</td>
+					</tr>
+				</c:forEach>
+			</c:if>
 		</table>
 
 		<div id="pageBar">
-			<%=request.getAttribute("pageBar") %>
+			${pageBar}
 		</div>
 	</section>
 <%@ include file="/views/common/footer.jsp"%>

@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="path" value="${pageContext.request.contextPath }"/>
 <!DOCTYPE html>
 <html>
 <head>
@@ -21,7 +23,7 @@
  </style>
 
     <div id="updatePassword-container">
-		<form name="updatePwdFrm" action="<%=request.getContextPath()%>/updatePasswordEnd" method="post" >
+		<form name="updatePwdFrm" action="${path}/updatePasswordEnd" method="post" >
 			<table>
 				<tr>
 					<th>현재 비밀번호</th>
@@ -42,7 +44,7 @@
 				<tr>
 					<td colspan="2">
 						<input type="hidden" name="userId" 
-						value="<%=request.getParameter("userId") %>"/>
+						value="${userId }"/>
 						<input type="submit" value="변경" />&nbsp;
 						<input type="button" value="닫기" />						
 					</td>

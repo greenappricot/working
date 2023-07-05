@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="path" value="${pageContext.request.contextPath }"/>
 <%@ include file="/views/common/header.jsp"%>
 <section id="notice-container">
 	<h2>공지사항작성</h2>
@@ -12,8 +14,7 @@
         </tr>
         <tr>
             <th>작성자</th>
-            <td><input type="text" name="noticeWriter" 
-            value="<%=loginMember.getUserId()%>" readonly></td>
+            <td><input type="text" name="noticeWriter"  value="${loginMember.userId }" readonly></td>
         </tr>
         <tr>
             <th>첨부파일</th>

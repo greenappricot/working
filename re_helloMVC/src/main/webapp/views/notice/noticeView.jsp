@@ -1,50 +1,50 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="path" value="${pageContext.request.contextPath }"/>
 <%@ page import="com.web.notice.model.vo.Notice" %>    
-<%
+<%-- <%
 	Notice n=(Notice)request.getAttribute("notice");
-%>    
+%>    --%> 
 <%@ include file="/views/common/header.jsp"%>
 <section id="notice-container">
 		<h2>공지사항 상세화면</h2>
         <table id="tbl-notice">
         <tr>
             <th>제 목</th>
-            <td><%=n.getNoticeTitle() %></td>
+            <td>${notice.noticeTitle}</td>
         </tr>
         <tr>
             <th>작성자</th>
-            <td><%=n.getNoticeWriter() %></td>
+            <td>${notice.noticeWriter}</td>
         </tr>
         <tr>
             <th>첨부파일</th>
             <td>
-           		<%if(n.getFilePath()!=null){ %>
-           		<div class="dowonload-container" onclick="fileDownload('<%=n.getFilePath()%>');">	
-           			<img src="<%=request.getContextPath()%>/images/file.png"
-           			width="20"><span><%=n.getFilePath() %></span>
+            	<c:if test="${not empty notice.filePath }">
+           		<div class="dowonload-container" onclick="fileDownload('${notice.filePath}');">	
+           			<img src="${path}/images/file.png"
+           			width="20"><span>${notice.filePath}</span>
            		</div>
-           		<%} %>
+           		</c:if>
             </td>
         </tr>
         <tr>
             <th>내 용</th>
-            <td><%=n.getNoticeContent() %></td>
+            <td>${notice.noticeContent}</td>
         </tr>
-        <%if(loginMember!=null&&
-        	(loginMember.getUserId().equals("admin")||
-        	loginMember.getUserId().equals(n.getNoticeWriter()))){ %>
+        	<c:if test="${not empty loginMember &&(loginMember.userId=='admin' || loginMember.userId==notice.noticeWriter)}">
 	        <tr>
 	            <th colspan="2">
 	                <input type="button" value="수정하기" onclick="">
 	                <input type="button" value="삭제하기" onclick="">
 	            </th>
 	        </tr>
-        <%} %>
+        </c:if>
     </table>
 	<script>
 		const fileDownload=(filename)=>{
-			location.assign("<%=request.getContextPath()%>/fileDownload.do?name="+filename);
+			location.assign(${path}+"/fileDownload.do?name="+filename);
 		}
 	</script>
 </section>
