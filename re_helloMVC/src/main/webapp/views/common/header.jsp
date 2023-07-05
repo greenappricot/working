@@ -96,9 +96,6 @@
 					$("#userId").focus();
 					return false;
 				}
-				/* if($("#password").length<4){
-					return false;
-				} */
 			}
 		</script>
 		
