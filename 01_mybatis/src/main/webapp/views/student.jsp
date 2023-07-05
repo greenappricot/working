@@ -20,6 +20,18 @@
 			<li>학생 이메일 : <c:out value="${s.studentEmail }"/></li>
 			<li>학생 주소 : <c:out value="${s.studentAddress }"/></li>
 			<li>등록일 : <c:out value="${s.reg_date }"/></li>
+			
+			<li>학생 이름 : <c:out value="${s.STUDENT_NAME }"/></li>
+			<li>학생 전화번호 : <c:out value="${s.STUDENT_TEL }"/></li>
+			<li>학생 이메일 : <c:out value="${s.STUDENT_EMAIL}"/></li>
+			<li>학생 주소 : <c:out value="${s.STUDENT_ADDR}"/></li>
+			<li>등록일 : <c:out value="${s.REG_DATE}"/></li>
+			<%-- <li>학생 이름 : <c:out value="${s['STUDENT_NAME']}"/></li>
+			<li>학생 전화번호 : <c:out value="${s['STUDENT_TEL'] }"/></li>
+			<li>학생 이메일 : <c:out value="${s['STUDENT_EMAIL']}"/></li>
+			<li>학생 주소 : <c:out value="${s['STUDENT_ADDR']}"/></li>
+			<li>등록일 : <c:out value="${s['REG_DATE']}"/></li> 
+			이렇게 대괄호 이용해서 불러올 수 있다.--%>
 		</ul>
 	</c:if>
 	<c:if test="${students.size()>0}">
@@ -40,6 +52,16 @@
 					<td><c:out value="${s.studentEmail }"/></td>
 					<td><c:out value="${s.studentAddress }"/></td>
 					<td><fmt:formatDate value="${s.reg_date }"/></td>
+				</tr>
+			</c:forEach>
+			<c:forEach var="s" items="${students}" varStatus="vs">
+				<tr>
+					<td><c:out value="${s.STUDENT_NO }"/></td>
+					<td><c:out value="${s.STUDENT_NAME }"/></td>
+					<td><c:out value="${s.STUDENT_TEL }"/></td>
+					<td><c:out value="${s.STUDENT_EMAIL }"/></td>
+					<td><c:out value="${s.STUDENT_ADDR }"/></td>
+					<td><fmt:formatDate value="${s.REG_DATE }"/></td>
 				</tr>
 			</c:forEach>
 		</table>
