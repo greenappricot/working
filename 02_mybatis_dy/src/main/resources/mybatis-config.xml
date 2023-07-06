@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd" >
+<configuration>
+	<properties resource="driver.properties"></properties><!-- driver.properties를 만들어서 가져올 수 있다. -->
+	<!-- NULL값에 대한 세팅을 할 수 있다 -->
+	<settings>
+		<setting name="jdbcTypeForNull" value="NULL"/>
+	</settings>
+	<!-- as로 등록해서 사용할 수 있다 -->
+	<typeAliases>
+		<typeAlias type="com.mybatis.dy.model.vo.Employee" alias="emp"/>
+	</typeAliases>
+	<environments default="mybatis">
+		<environment id="mybatis">
+			<transactionManager type="JDBC"/>
+			<dataSource type="POOLED">
+				<property name="driver" value="${driver}"/><!-- driver.properties에 적은 key값을 불러온다 -->
+				<property name="url" value="${url}"/>
+				<property name="username" value="${user}"/>
+				<property name="password" value="${pw}"/>
+			</dataSource>
+		</environment>
+	</environments>
+	<!-- <environments default="mybatis">
+		<environment id="mybatis">
+			<transactionManager type="JDBC"/>
+			<dataSource type="POOLED">
+				<property name="driver" value="oracle.jdbc.driver.OracleDriver"/>
+				<property name="url" value="jdbc:oracle:thin:@localhost:1521:xe"/>
+				<property name="username" value="BS"/>
+				<property name="password" value="BS"/>
+			</dataSource>
+		</environment>
+	</environments> -->
+	<mappers>
+		<mapper resource="/mapper/employee-mapper.xml"/>
+	</mappers>
+</configuration>
