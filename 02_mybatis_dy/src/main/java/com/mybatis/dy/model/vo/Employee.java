@@ -26,4 +26,5 @@ public class Employee {
 	private Date entDate;
 	private String entYn;
 	private String gender;
+	private Department dept;
 }

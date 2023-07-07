@@ -8,6 +8,8 @@ import org.apache.ibatis.session.SqlSession;
 import com.mybatis.dy.common.SessionTemplate;
 import com.mybatis.dy.model.dao.EmpDao;
 import com.mybatis.dy.model.dao.EmpDaoImpl;
+import com.mybatis.dy.model.vo.Board;
+import com.mybatis.dy.model.vo.Department;
 import com.mybatis.dy.model.vo.Employee;
 
 public class EmpServiceImpl implements EmpService {
@@ -34,6 +36,22 @@ public class EmpServiceImpl implements EmpService {
 	public List<Employee> searchEmp(Map<String, Object> param) {
 		SqlSession session= SessionTemplate.getSession();
 		List<Employee> list=dao.searchEmp(session, param);
+		session.close();
+		return list;
+	}
+	@Override
+	public List<Department> selectAllDept() {
+		SqlSession session=SessionTemplate.getSession();
+		List<Department> list=dao.selectAllDept(session);
+		session.close();
+		return list;
+	}
+	
+	@Override
+	public List<Board> boardList(int no) {
+		SqlSession session= SessionTemplate.getWebSession();
+		List<Board> list=dao.boardList(session, no);
+		session.close();
 		return list;
 	}
 

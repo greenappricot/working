@@ -9,6 +9,10 @@
 	<!-- as로 등록해서 사용할 수 있다 -->
 	<typeAliases>
 		<typeAlias type="com.mybatis.dy.model.vo.Employee" alias="emp"/>
+		<typeAlias type="com.mybatis.dy.model.vo.Department" alias="department"/>
+		<typeAlias type="com.mybatis.dy.model.vo.Member" alias="mem"/>
+		<typeAlias type="com.mybatis.dy.model.vo.Board" alias="board"/>
+		<typeAlias type="com.mybatis.dy.model.vo.BoardComment" alias="boardComment"/>
 	</typeAliases>
 	<environments default="mybatis">
 		<environment id="mybatis">
@@ -19,6 +23,15 @@
 				<property name="username" value="${user}"/>
 				<property name="password" value="${pw}"/>
 			</dataSource>
+		</environment>
+		<environment id="web">
+			 <transactionManager type="JDBC"/>
+			 <dataSource type="POOLED">
+			 	<property name="driver" value="${driver}"/><!-- driver.properties에 적은 key값을 불러온다 -->
+				<property name="url" value="${url}"/>
+				<property name="username" value="WEB"/>
+				<property name="password" value="WEB"/>
+			 </dataSource>
 		</environment>
 	</environments>
 	<!-- <environments default="mybatis">
@@ -34,5 +47,6 @@
 	</environments> -->
 	<mappers>
 		<mapper resource="/mapper/employee-mapper.xml"/>
+		<mapper resource="/mapper/member-mapper.xml"/>
 	</mappers>
 </configuration>

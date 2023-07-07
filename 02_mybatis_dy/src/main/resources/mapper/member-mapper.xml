@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="member">
+<!-- board resultMap에 member association 추가하기-->
+	<resultMap id="memberMap" type="mem">
+		<id property="userid" column="USERID"/>
+		<result property="password" column="PASSWORD"/>
+		<result property="username" column="USERNAME"/>
+		<result property="gender" column="GENDER"/>
+		<result property="age" column="AGE"/>
+		<result property="email" column="EMAIL"/>
+		<result property="phone" column="PHONE"/>
+		<result property="address" column="ADDRESS"/>
+		<result property="hobby" column="HOBBY"/>
+		<result property="enrolldate" column="ENROLLDATE"/>
+		<association property="board" resultMap="boardMap"/>
+		<collection property="boardComment" resultMap="boardCommentMap"/>
+	</resultMap>
+	<resultMap id="boardMap" type="board">
+		<id property="boardNo" column="BOARD_NO"/>
+		<result property="boardTitle" column="BOARD_TITLE"/>
+		<result property="boardWriter" column="BOARD_WRITER"/>
+		<result property="boardContent" column="BOARD_CONTENT"/>
+		<result property="boardOriginalFilename" column="BOARD_ORIGINAL_FILENAME"/>
+		<result property="boardRenamedFilename" column="BOARD_RENAMED_FILENAME"/>
+		<result property="boardDate" column="BOARD_DATE"/>
+		<result property="boardReadcount" column="BOARD_READCOUNT"/>
+		<association property="member" resultMap="memberMap"/>
+		<collection property="boardComment" resultMap="boardCommentMap"/>
+	</resultMap>
+	<resultMap id="boardCommentMap" type="boardComment">
+		<id property="boardCommentNo" column="BOARD_COMMENT_NO"/>
+		<result property="boardCommentLevel" column="BOARD_COMMENT_LEVEL"/>
+		<result property="boardCommentWriter" column="BOARD_COMMENT_WRITER"/>
+		<result property="boardCommentContent" column="BOARD_COMMENT_CONTENT"/>
+		<result property="boardRef" column="BOARD_REF"/>
+		<result property="boardCommentRef" column="BOARD_COMMENT_REF"/>
+		<result property="boardCommentDate" column="BOARD_COMMENT_DATE"/>
+		<association property="member" resultMap="memberMap"/>
+		<association property="board" resultMap="boardMap"/>
+	</resultMap>
+	<select id="memberList" resultType="map">
+		SELECT * FROM MEMBER
+	</select>
+	
+	<select id="boardList" resultMap="boardMap" parameterType="_int">
+		SELECT * FROM BOARD JOIN MEMBER ON BOARD_WRITER=USERID JOIN BOARD_COMMENT ON BOARD_NO=BOARD_REF  WHERE BOARD_NO=#{no}
+	</select>
+</mapper>
