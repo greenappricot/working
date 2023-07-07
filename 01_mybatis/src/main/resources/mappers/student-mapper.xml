@@ -111,6 +111,11 @@
 	<select id="selectStudentListMap" resultType="map">
 		SELECT * FROM STUDENT
 	</select>
+	 
+	<select id="selectStudentPage" resultMap="studentMap">
+		<!-- SELECT * FROM (SELECT ROWNUM AS RNUM, S.* FROM ()) mybatis가 처리해주기 때문에 rownum 안에 작성한 구문만 작성해도 된다-->
+		SELECT * FROM STUDENT
+	</select>
 </mapper>
 
 

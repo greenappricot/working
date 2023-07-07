@@ -67,6 +67,8 @@
 	<h4><a href="${path }/student/selectStudentMap?no=1">1번 학생 조회</a></h4>
 	<p>Map으로 다수 데이터 출력하기</p>
 	<h4><a href="${path }/student/selectStudentListMap">전체학생조회</a></h4>
+	<h3>마이바티스 페이징처리</h3>
+	<h4><a href="${path }/student/studentPage.do">페이징 처리하기</a></h4>
 </body>
 </html>
 
