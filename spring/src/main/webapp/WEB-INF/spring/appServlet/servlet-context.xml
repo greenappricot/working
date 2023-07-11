@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:websocket="http://www.springframework.org/schema/websocket"
+	xsi:schemaLocation="http://www.springframework.org/schema/websocket http://www.springframework.org/schema/websocket/spring-websocket-4.3.xsd
+		http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
+	
+	<!-- Enables the Spring MVC @Controller programming model -->
+	<annotation-driven /><!-- 접두어로 MVC가 생략되어있음 -> beans:bean xmlns 에서 mvc를 default로 설정했기 때문에 -->
+	<!-- 
+		기본 폴더 안에서 annotation으로 등록한 애들을 검색하게 한다 -> beans:bean으로 등록하지 않아도 불러와서 사용할 수 있게 한다.
+		특정 시점에 사용할 수 있게 한다.
+	-->
+
+	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
+	<resources mapping="/resources/**" location="/resources/" />
+	<!-- 절대 경로로 mapping 하기 위해 resources의 경로를 맞춰준 설정 / resources 폴더 안에 css, js, images, upload 폴더 생성함 -->
+
+	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
+	<!-- 여러가지 resolver를 연결할 수 있다 (json ,,,) -->
+	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<beans:property name="prefix" value="/WEB-INF/views/" />
+		<beans:property name="suffix" value=".jsp" />
+	</beans:bean>
+	
+	<context:component-scan base-package="com.bs.spring" />
+	<!-- base-package로 설정되어 있어야 annotation된 bean들을 가져올 수 있다 필요한 내용들을 bean으로 등록해서 사용할 수 있다. -->
+	
+	<!-- 
+		pojo 클래스 bean으로 등록하기 
+		<beans:bean> 태그를 이용해서 등록한다. 기본적인 속성으로 id, class를 갖는다. 
+			id : context 내에서 사용하는 bean의 이름
+			class : 대상이 되는 class 지정(패키지명.클래스명 다 적어줘야함)
+	-->
+	<!-- Animal 클래스를 default 생성자로 생성해서 bean으로 등록한다. (다른 속성 없이 이렇게만 설정하면) -->
+	<!-- 특정 클래스에서 가져와서 사용할 수 있다. -->
+	<!-- <beans:bean id="bbo" class="com.bs.spring.beantest.Animal"/> -->
+	
+	<!-- pojo 생성 시 setter를 이용해서 data를 넣어서 생성시키기 
+		xml에서 property 사용 -> setter 이용
+		property 태그는 name, value 속성을 가진다.
+		name : field name, value : field 값
+	 -->
+	<!-- <beans:bean id="bbo" class="com.bs.spring.beantest.Animal">
+		<beans:property name="name" value="뽀송"/>
+		<beans:property name="age" value="3"/>
+		<beans:property name="height" value="50.4"/>
+	</beans:bean> -->
+	<!-- 매개변수 있는 생성자를 이용해서 생성시키기 -->
+	<beans:bean id="bbo" class="com.bs.spring.beantest.Animal">
+		<beans:constructor-arg index="0" value="뽀송"/><!-- 인덱스 번호는 Animal vo에서의 매개변수 있는 생성자에 들어가는 순서 -->
+		<beans:constructor-arg index="1" value="3"/>
+		<!-- <beans:constructor-arg index="2" value="50.4"/> 2개만 받는 매개변수가 있는 생성자를 만든 후에는 에러 없이 생성할 수 있다-->
+	</beans:bean>
+	<beans:bean id="dog" class="com.bs.spring.beantest.Animal">
+		<beans:property name="name" value="뽀삐"/>
+	</beans:bean>
+	
+	<beans:bean id="emp" class="com.bs.spring.beantest.Employee" init-method="initialMethod" destroy-method="destoryMethod">
+	<!-- 
+		Employee vo 클래스 안의 메소드를 시작, 종료 하는 시점 실행할 수 있게 한다.
+		init-method : 생성할 때 실행할 메소드 
+		destroy-method : 소멸할 때 실행할 메소드
+	-->
+	
+		<beans:property name="name" value="최주영"/>
+		<beans:property name="age" value="24"/>
+		<beans:property name="address" value="경기도 안양시"/>
+		<beans:property name="salary" value="100"/>
+		<beans:property name="dept" ref="dept"/>
+	</beans:bean>
+	<beans:bean id="emp2" class="com.bs.spring.beantest.Employee">
+		<beans:constructor-arg index="0" ref="dept"/>
+ 	</beans:bean>
+	<!-- 의존 관계에 있을 때 employee 객체 생성하면서 department객체 생성하기 -->
+	<!-- 
+		등록하는 bean이 다른 클래스와 연관 관계(참조 관계)가 설정되어 있을 때
+		다른 bean을 등록해야한다.
+		객체 자체를 값으로 가져올 때 ref 속성을 이용해서 설정한다.
+	-->
+	<beans:bean id="dept" class="com.bs.spring.beantest.Department">
+		<beans:constructor-arg index="0" value="1"/>
+		<beans:constructor-arg index="1" value="개발부"/>
+		<beans:constructor-arg index="2" value="판교"/>
+	</beans:bean>
+	
+	<!-- 다른 xml파일에서 사용하는 것을 사용하기 위해 import 할 수 있다. -->
+	<!-- <beans:import resource=""/> -->
+	
+</beans:beans>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
