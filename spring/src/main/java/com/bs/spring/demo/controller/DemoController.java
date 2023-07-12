@@ -1,19 +1,36 @@
 package com.bs.spring.demo.controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.bs.spring.demo.model.dto.Demo;
+import com.bs.spring.demo.service.DemoService;
 
 @Controller
 public class DemoController {
+	
+	@Autowired
+	private DemoService service;
 	
 	@RequestMapping("/demo/demo.do")
 	public String demo() {
@@ -88,6 +105,172 @@ public class DemoController {
 //		res.setContentType("text/html;charset=utf-8");
 //		PrintWriter out=res.getWriter();
 //		out.print("<h2>"+devName+" "+devAge+" "+devGender+" "+devEmail+"</h2>");
+	}
+	
+	// 1:1로 매칭해서 데이터 받기
+	// 매핑 메소드의 매개변수에 파라미터로 전송되는 이름과 동일한 이름의 변수를 선언
+	// 매개변수의 타입은 사용할 타입으로 설정한다. (변경 가능해야 한다)
+	// 		주의 !) 기본형 타입의 매개변수를 설정할 때, 매개변수로 사용한 변수는 모두 작성되어야 함 (참조형은 null값으로 넘어온다)
+	@RequestMapping("demo/demo2.do")
+	public String demo2(String devName, int devAge, String devGender, String devEmail, String[] devLang, /* double weight, */ Model model) {
+		//System.out.println(devName+" "+devAge+" "+devGender+" "+devEmail+" "+Arrays.toString(devLang)); // 넘어온 값 확인
+		
+		// 페이지에 생성한 데이터를 전송하려면 request, session, servletContext 사용했는데 
+		// Model : spring에서 데이터 전송하는 (저장하는) 객체를 제공  
+		// model에 데이터 저장하기 -> model.addAttribute("key",value); <String,Object>
+		
+		Demo d=Demo.builder()
+				.devName(devName)
+				.devAge(devAge)
+				.devGender(devGender)
+				.devEmail(devEmail)
+				.devLang(devLang)
+				.build();
+		
+		model.addAttribute("demo", d); // setAttribute와 같음
+		
+		return "demo/demoResult";
+	}
+	
+	// @RequsetParam : 파라미터 데이터를 받을 때, 기본 옵션을 선택할 수 있다.
+	// value : 필드명으로 일치 시켜줌
+	// defaultValue : 값이 안 넘어왔을 때 기본 설정값을 줄 수 있다.
+	// required : 필수값 확인 (false: 생략해버림)
+	@RequestMapping("/demo/demo3.do")
+	public String usingRequestParam(@RequestParam(value="devName") String name, @RequestParam(value="devAge", defaultValue="10")int age, @RequestParam(value="devGender")String gender, @RequestParam(value="devEmail", required=true)String devEmail, String[] devLang, Model model) {
+		// 매개변수의 이름과 파라미터의 변수명이 달라도 괜찮다. 
+		Demo d=Demo.builder()
+				.devName(name)
+				.devAge(age)
+				.devGender(gender)
+				.devEmail(devEmail)
+				.devLang(devLang)
+				.build();
+		model.addAttribute("demo", d);
+		
+		return "demo/demoResult";
+	}
+	
+	// dto를 매개변수로 해서 파라미터 값을 받을 때, field이름이랑 parameter 이름이 같아야 값을 dto에 저장할 수 있다
+	// dto로 값을 가져올 때는 자료형에 주의해야한다 (java.util.Date로 가져오면 값을 parsing하지 못할 수 있다)
+	// dto에서 has a 관계로 되어 있으면 값을 가져올 수 없다
+	
+	// Dto/ Vo 객체로 직접 parameter 값 받기
+	// 매개변수로 전달된 parameter이름과 동일한 필드명을 갖는 객체를 선언한다.
+	// 		주의 !) 클래스 타입 Date를 전달받을 때는 (java.sql.Date를 선언하는 편이 낫다 -> 호환성이 더 좋음) 
+	@RequestMapping("demo/demo4.do")
+	public String commandMapping(Demo demo, Model m) {
+		System.out.println(demo);
+		m.addAttribute("demo",demo);
+		return "demo/demoResult";
+	}
+	
+	// @RequestParam : Map으로 parameter 데이터 받아오기 
+	// 단일값만 가져올 수 있다 / 배열에 대한 값을 다 가져오지 못하고 date는 string으로 가져오기 때문에 parsing해서 사용해야한다.
+	// -> 따로 값을 매개변수로 받아서 map에 추가할 수 있다.
+	@RequestMapping("demo/demo5.do")
+	public String mapMapping(@RequestParam Map<String,Object> param, String[] devLang, Model m) {
+		System.out.println(param);
+		param.put("devLang", devLang);
+		m.addAttribute("demo",param);
+		return "demo/demoResult";
+	}
+	
+	// 파라미터로 넘어오는 데이터 외의 기타 데이터 가져오기 -> String 값으로 가져올 수 있다.
+	// Cookie, header, Session 등의 정보 가져오기(index.jsp에서 테스트로 설정함)
+	// Cookie : @CookieValue(value="key") required 옵션 있음 -> String data 
+	// Header : @RequestHeader(value="헤더이름") -> String header
+	// Session : @SessionAttribute(value="sessionKey값") -> String id
+	@RequestMapping("/demo/demo6.do")
+	public String extraData(@CookieValue(value="testData", required=false, defaultValue="rest-time")String data, @RequestHeader(value="user-agent") String userAgent, @SessionAttribute(value="sessionId") String sessionId, @RequestHeader(value="Referer") String referer) {
+		System.out.println("cookie : "+data+" header : "+userAgent+" session : "+sessionId+" referer : "+referer);
+		return "index";
+	}
+	
+	// ModelAndView 객체를 이용해서 반환하기 -> 일반적으로 String으로 반환하는 것을 지향
+	@RequestMapping("/demo/demo7.do")
+	public ModelAndView modelAndViewReturn(Demo d,ModelAndView mv) {
+		// ModealAndView : view 설정과 Model 설정을 같이 할 수 있는 객체
+		// view : setViewName() 메소드를 이용해서 저장
+		// data : addObject("key",value) 메소드 이용해서 저장
+		
+		mv.addObject("demo",d);
+		mv.setViewName("demo/demoResult");
+		
+		//mv.getModel(); model의 내용을 다시 가져올 수 있다.
+		return mv;
+	}
+	
+	// 자료형에 대한 반환하기 -> 데이터만 응답할 때 사용한다. -> jackson라이브러리를 이용해서 처리한다
+	// restfull메소드를 구현했을 때 사용한다.
+	// @ResponseBody 메소드에 선언부에 선언한다. (return값 있는 곳에 선언해도 무방)
+	// viewResolver로 가면 일치하는 값이 없음/ viewResolver로 이동하는 것이 아니라 body로 전달한다
+	@RequestMapping("/demo/demo8.do")
+	@ResponseBody
+	public String dataReturn(){
+		return "유병승 최주영 조장흠 솔 조윤진"; // list 파싱 못 했었음,,, 그리고 이 반환 값도 encoding 해야함 
+	}
+	
+	// Request 요청 메소드(get, post)를 필터링하기
+	// @RequestMapping(value="url주소", method=RequestMethod.GET || RequestMethod.POST)
+//	@RequestMapping(value = "/demo/demo9.do", method = RequestMethod.POST ) 
+	//logException(AbstractHandlerExceptionResolver.java:208) - Resolved [org.springframework.web.HttpRequestMethodNotSupportedException: Request method 'POST' not supported
+	// method방식을 GET으로 고정시켜놨는데, demo.jsp에서 post방식으로 form을 전달하기 때문에 에러 발생한다.
+//	public String methodCheck(Demo d, Model m) {
+//		m.addAttribute("demo",d);
+//		return "demo/demoResult";
+//	}
+	
+	// 간편하게 사용할 수 있게 Mapping 어노테이션 지원 
+//	@GetMapping 
+//	@PostMapping
+//	@DeleteMapping
+//	@PutMapping
+	@PostMapping("/demo/demo9.do") 
+	public String methodCheck(Demo d, Model m) {
+		m.addAttribute("demo",d);
+		return "demo/demoResult";
+	}
+	
+	// mapping 주소를 설정할 때 { }를 사용할 수 있다.(rest 방식으로 설계할 때 많이 사용)
+	// "/board/boardview?no=1" -> "/board/1" method = GET
+	// "/board/" method = GET
+	@GetMapping("/demo/{no}")
+	public String searchDemo(@PathVariable(value = "no") int no) {
+		System.out.println(no);
+		return "demo/demoResult";
+	}
+	
+	@RequestMapping(value="/demo/insertDemo.do", method=RequestMethod.POST)
+	public String insertDemo(Demo demo,Model m) {
+		System.out.println(demo);
+		int result=service.insertDemo(demo);
+		System.out.println(result);
+		m.addAttribute("msg",result>0?"등록 성공":"등록 실패");
+		m.addAttribute("loc","/demo/demo.do");
+		//return "demo/demo"; 
+		// default로 request.getRequestDispatcher()로 이동되는데 
+		// sendRedirect로 변경하는 방법
+	
+		// prefix redirect : 요청할 주소 -> 매핑주소(주소값 주면서 재요청 하기 때문에 내부에서 직접 jsp 호출할 수 없으므로 매핑 주소를 적어야한다.)
+		//return "redirect:/";
+		return "common/msg";
+	}
+	
+	@RequestMapping("/demo/selectDemoAll.do")
+	public String selectDemoAll(Model m){
+		List<Demo> list=service.selectDemoAll();
+		System.out.println(list);
+		m.addAttribute("demo",list);
+		return "demo/demoList";
+	}
+	
+	@RequestMapping("/demo/selectDemo.do")
+	public String selectDemo(Model m, int devNo) {
+		System.out.println(devNo);
+		Demo d=service.selectDemo(devNo);
+		m.addAttribute("demo",d);
+		return "demo/demo";
 	}
 	
 }

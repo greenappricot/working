@@ -31,12 +31,17 @@
 		</tr>
 		<tr>
 			<th>개발가능언어</th>
-			<c:forEach items="${demo.devLang}" var="d">
 				<td>
+				<c:forEach items="${demo.devLang}" var="d">
 					<c:out value="${d}"/>
+				</c:forEach>
 				</td>
-			</c:forEach>
 		</tr>
+		<tr>
+			<th>생년월일</th>
+			<td>${demo.birth }</td>
+		</tr>
+		<tr>
 		</c:if>
 		<c:if test="${empty demo }">
 			<tr>

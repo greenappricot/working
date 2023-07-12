@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="dev">
+	<insert id="insertDemo" parameterType="demo">
+		INSERT INTO DEV VALUES(SEQ_DEV_NO.NEXTVAL, #{devName}, #{devAge}, #{devEmail}, #{devGender}, 
+			<!-- <foreach item="l" collection="devLang" open="'" close="'" separator=",">
+				${l}
+			</foreach> -->
+		#{devLang, typeHandler=strArr})
+	</insert>
+	<resultMap id="demoMap" type="demo">
+		<id property="devNo" column="DEVNO"/>
+		<result property="devName" column="DEVNAME"/>
+		<result property="devAge" column="DEVAGE"/>
+		<result property="devGender" column="DEVGENDER"/>
+		<result property="devEmail" column="DEVEMAIL"/>
+		<result property="devLang" column="DEVLANG" typeHandler="strArr"/>
+		<!-- column타입과 필드 타입이 일치하지 않으므로, resultType말고 resultMap으로 만들어서 반환해야한다 -->
+	</resultMap>
+	<select id="selectDemoAll" resultMap="demoMap">
+		SELECT * FROM DEV
+	</select>
+	
+	<select id="selectDemo" resultMap="demoMap" parameterType="_int">
+		SELECT * FROM DEV WHERE DEVNO=#{devNo}
+	</select>
+</mapper>
