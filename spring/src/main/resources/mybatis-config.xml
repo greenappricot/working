@@ -4,5 +4,6 @@
 	<typeAliases>
 		<typeAlias alias="demo" type="com.bs.spring.demo.model.dto.Demo"/>
 		<typeAlias alias="strArr" type="com.bs.spring.common.StringArrayTypeHandler"/>
+		<typeAlias alias="member" type="com.bs.spring.member.model.dto.Member"/>
 	</typeAliases>
 </configuration>

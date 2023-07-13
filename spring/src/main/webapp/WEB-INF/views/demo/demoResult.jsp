@@ -37,10 +37,10 @@
 				</c:forEach>
 				</td>
 		</tr>
-		<tr>
+		<%-- <tr>
 			<th>생년월일</th>
 			<td>${demo.birth }</td>
-		</tr>
+		</tr> --%>
 		<tr>
 		</c:if>
 		<c:if test="${empty demo }">

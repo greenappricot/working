@@ -8,6 +8,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,6 +30,8 @@ import com.bs.spring.demo.service.DemoService;
 
 @Controller
 public class DemoController {
+	
+	private Logger logger=LoggerFactory.getLogger(DemoController.class);
 	
 	@Autowired
 	private DemoService service;
@@ -79,16 +83,21 @@ public class DemoController {
 	// 서블릿 방식으로 매핑메소드 이용하기
 	@RequestMapping("demo/demo1.do")
 	public void demo1(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		System.out.println(req);
-		System.out.println(res);
+//		System.out.println(req);
+//		System.out.println(res); log4j에 의해서 debug를 logger로 출력할 수 있다.
+		logger.debug("request : {}",req); // 자동으로 String으로 변경해서 출력할 수 있다. 
+		logger.debug("response: {}",res);
 		String devName=req.getParameter("devName");
 		int devAge=Integer.parseInt(req.getParameter("devAge"));
 		String devGender= req.getParameter("devGender");
 		String devEmail=req.getParameter("devEmail");
 		String[] devLang= req.getParameterValues("devLang");
-		System.out.println(devName+" "+devAge+" "+devGender+" "+devEmail);
+		logger.debug("demo : {}",devName+" "+devAge+" "+devGender+" "+devEmail);
+		//System.out.println(devName+" "+devAge+" "+devGender+" "+devEmail);
 		for(String l: devLang) {
-			System.out.println(l);
+			logger.debug(l);
+			//System.out.println(l);
+			// 내가 확인해야 하는 값이면 info로 수정해서 사용할 수 있다.
 		}
 		
 		Demo d=Demo.builder()
@@ -270,7 +279,7 @@ public class DemoController {
 		System.out.println(devNo);
 		Demo d=service.selectDemo(devNo);
 		m.addAttribute("demo",d);
-		return "demo/demo";
+		return "demo/demoResult";
 	}
 	
 }

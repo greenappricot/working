@@ -5,12 +5,31 @@
 	<appender name="console" class="org.apache.log4j.ConsoleAppender">
 		<param name="Target" value="System.out" />
 		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="%-5p : %l - %m%n" />
+			<!-- <param name="ConversionPattern" value="%-5p : %l - %m%n" /> -->
+			<param name="ConversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %-5p : [%l] - %m%n"/>
+			<!-- [2023-07-13 16:40:25] ERROR : [com.bs.spring.MainController.main(MainController.java:65)] - error 내용 출력하기 -->
+		</layout>
+		<!-- <layout class="org.apache.log4j.SimpleLayout"/> 단순하게 출력됨 : INFO - Completed initialization in 801 ms -->
+		<!-- <layout class="org.apache.log4j.HTMLLayout"/> HTML tag로 출력됨 </tr>com.bs.spring.beantest.Employee클래스 생성 -->
+		<!-- <layout class="org.apache.log4j.xml.XMLLayout"/> log4j prefix를 시작으로 출력됨<log4j:event logger="org.springframework.web.servlet.DispatcherServlet" timestamp="1689232678527" level="INFO" thread="main"> -->
+	</appender>
+	
+	<!-- file로 log를 출력하는 appender 등록하기 -->
+	<appender name="fileAppender" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="file" value="c:/logs/spring-log.log"/><!-- 저장할 파일 경로(절대 경로 지정) -->
+		<param name="append" value="true"/><!-- 덮어쓰기/추가 설정 -->
+		<param name="datePattern" value="yyyy-MM-dd"/><!-- 날짜 출력 형식 지정 -->
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %-5p : [%l] - %m%n"/>
 		</layout>
 	</appender>
-		<!-- Application Loggers -->
+	
+	<!-- Application Loggers -->
+	<!-- level : 구현체가 method를 이용해서 log를 남기는데 용도에 따라 level을 분류해놨음 -->
 	<logger name="com.bs.spring">
 		<level value="debug" />
+		<appender-ref ref="fileAppender"/><!-- 전체 logger에 대한 것을 file에 저장하지 않고 원하는 logger에 appender를 설정할 수 있다. -->
+		<!-- 현재 이 logger는 콘솔, file 둘다 log가 기록된다. -->
 	</logger>
 	
 	<!-- 3rdparty Loggers -->
