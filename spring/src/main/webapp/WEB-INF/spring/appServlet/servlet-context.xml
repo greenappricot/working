@@ -93,6 +93,29 @@
 	<!-- 다른 xml파일에서 사용하는 것을 사용하기 위해 import 할 수 있다. -->
 	<!-- <beans:import resource=""/> -->
 	
+	<!-- interceptor 등록하기 -->
+	<!-- /demo/* 경로에서 LoggerInterceptor를 연결 -->
+	<interceptors>
+		<interceptor>
+			<mapping path="/demo/*"/>
+			<!-- <exclude-mapping path="/demo/demo.do" />path의 경로에서 제외할 경로를 지정할 수 있다. -->
+			<beans:bean class="com.bs.spring.common.interceptor.LoggerInterceptor"/>
+		</interceptor>
+		<interceptor>
+			<mapping path="/demo/selectDemoAll.do"/>
+			<beans:ref bean="loginCheck"/><!-- 아래에 등록한 bean을 interceptor로 등록한다. -->
+		</interceptor>
+		<!-- <interceptor>
+			<mapping path="/memo/*"/>
+			<beans:ref bean="adminCheck"/>
+		</interceptor> -->
+		
+	</interceptors>
+	
+	<!-- beans:bean으로 interceptor 등록하기 -->
+	<beans:bean id="loginCheck" class="com.bs.spring.common.interceptor.LoginCheckInterceptor"/>
+	<beans:bean id="adminCheck" class="com.bs.spring.common.interceptor.AdminCheckInterceptor"/>
+	
 </beans:beans>
 
 

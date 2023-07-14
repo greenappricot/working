@@ -19,8 +19,18 @@
 			<property name="password" value="spring"/>
 		</bean>
 		
+		<bean id="proxyDataSource" class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
+			<constructor-arg index="0" ref="dataSource"/>
+			<property name="logFormatter"><!-- setter -->
+				<bean class="net.sf.log4jdbc.tools.Log4JdbcCustomFormatter">
+					<property name="loggingType" value="MULTI_LINE"/>
+					<property name="sqlPrefix" value="[SQL]"/>
+				</bean>
+			</property>
+		</bean>
+		
 		<bean id="sessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-			<property name="dataSource" ref="dataSource"/>
+			<property name="dataSource" ref="proxyDataSource"/><!-- proxyDataSource가 중간매개체이므로 ref를 바꿔준다 -->
 			<property name="configLocation" value="classpath:mybatis-config.xml"/><!-- mybatis에서 사용하는 config.xml의 위치 설정 -->
 			<property name="mapperLocations" value="classpath:mappers/**/*.xml"/><!-- mybatis에서 사용하는 mapper.xml의 위치 설정 : classpath 아래 mappers 폴더 하위 폴더 중 xml 파일 전부 -->
 		</bean>

@@ -267,7 +267,7 @@ public class DemoController {
 	}
 	
 	@RequestMapping("/demo/selectDemoAll.do")
-	public String selectDemoAll(Model m){
+	public String selectDemoAll(Model m) {
 		List<Demo> list=service.selectDemoAll();
 		System.out.println(list);
 		m.addAttribute("demo",list);

@@ -24,6 +24,21 @@
 		</layout>
 	</appender>
 	
+	<!-- SQL문을 출력하는 logger 등록하기 -->
+	<appender name="sqlLogger" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%-5p : %m%n"/>
+		</layout>
+	</appender>
+	<logger name="jdbc.sqlonly" additivity="false">
+		<level value="info"/>
+		<appender-ref ref="sqlLogger"/>
+	</logger>
+	<logger name="jdbc.resultsettable" additivity="false">
+		<level value="info"/>
+		<appender-ref ref="sqlLogger"/>
+	</logger>
+	
 	<!-- Application Loggers -->
 	<!-- level : 구현체가 method를 이용해서 log를 남기는데 용도에 따라 level을 분류해놨음 -->
 	<logger name="com.bs.spring">
