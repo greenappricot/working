@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,20 +36,26 @@ public class MemberController {
 	private BCryptPasswordEncoder passwordEncoder;
 	
 	@RequestMapping("/enrollMember.do")
-	public String enrollMember() {
+	public String enrollMember(@ModelAttribute("member") Member m) { // model에 연결해준다.
+		// 페이지 전환
+		// 매개변수가 아니라 지역 변수로 어노테이션 선언해서 연결해도 된다.
 		return "member/enrollMember";
 	}
 	
 	@RequestMapping(value="/insertMember.do", method=RequestMethod.POST)
-	public String insertMember(Member m, Model msg) {
+	public String insertMember(@Validated Member m, BindingResult isResult, Model msg) {
+		
+		// Validated 처리 된 객체를 BindingResult에 넘겨준다
+		if(isResult.hasErrors()) {
+			// 에러가 나면 다시 입력 화면으로 보낸다.
+			return "member/enrollMember";
+		}
 		
 		// 패스워드 암호화 처리하기
 		String oriPwd=m.getPassword();
-//		System.out.println(oriPwd);
 		log.debug(oriPwd);
 		String encodePwd=passwordEncoder.encode(oriPwd);
 		log.debug(encodePwd);
-//		System.out.println(encodePwd);
 		m.setPassword(encodePwd);
 		
 		int result=service.insertMember(m);
@@ -73,6 +82,7 @@ public class MemberController {
 		if(member!=null&&passwordEncoder.matches(param.get("password"), member.getPassword())) { // Map에서 generic타입 선언 되어 있지 않으면 map에서 가져오는 값에 String 형변환 해야 함
 //		if(member!=null&&member.getPassword().equals(param.get("password"))) { 암호화 전 메소드 처리
 			//session.setAttribute("loginMember",member);
+			
 			// Session없이 Model을 이용한 로그인처리하기
 			model.addAttribute("loginMember",member);
 		}else {
@@ -92,6 +102,9 @@ public class MemberController {
 	public String logoutMember(SessionStatus status) {
 		// SessionAttribute 어노테이션을 이용해서 등록한 loginMember 삭제하기
 		// SessionStatus 객체를 이용해서 삭제한다.
+		
+		//if(1==1) throw new IllegalArgumentException("잘못된 접근입니다."); // afterThrowing aspect 확인을 위한 강제 exception 생성
+		
 		if(!status.isComplete()) { // complete : 세션 만료
 			status.setComplete(); // 강제 세션 만료 
 		}

@@ -6,16 +6,19 @@
       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
       
       <!-- xml 방식으로 aop 적용하기 -->
-      <bean id="loggerAspect" class="com.bs.spring.common.aop.LoggerAspect"/><!-- bean으로 등록 -->
+      <!-- <bean id="loggerAspect" class="com.bs.spring.common.aop.LoggerAspect"/>bean으로 등록
       
       <aop:config>
       	<aop:aspect ref="loggerAspect">
-      		<aop:pointcut expression="execution(* com.bs.spring.memo..*(..))" id="logPointcut"/><!-- memo패키지 아래의 모든 메소드 지정 -->
-      		<!-- method 지정 가능함 : 표현식을 이용해서 작성한다. -->
-      		<!-- execution(접근제한자 반환형 메소드이름 매개변수) -->
+      		<aop:pointcut expression="execution(* com.bs.spring.memo..*(..))" id="logPointcut"/>memo패키지 아래의 모든 메소드 지정
+      		method 지정 가능함 : 표현식을 이용해서 작성한다.
+      		execution(접근제한자 반환형 메소드이름 매개변수)
       		<aop:before method="loggerBefore" pointcut-ref="logPointcut"/>
       		<aop:after method="loggerAfter" pointcut-ref="logPointcut"/>
       	</aop:aspect>
-      </aop:config>
+      </aop:config> -->
+      
+      <!-- Annotation 방식으로 AOP 적용하기 -->
+      <aop:aspectj-autoproxy/><!-- annotation으로 선언된 aop를 자동으로 인지해서 연결해준다. -->
       
 </beans>

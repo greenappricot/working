@@ -34,3 +34,7 @@ div#demo-container{
 	
 div#enroll-container{width:400px; margin:0 auto; text-align:center;}
 div#enroll-container input, div#enroll-container select {margin-bottom:10px;}
+div.pagination-container{
+	width: 40%;
+	margin : 0 auto;
+}

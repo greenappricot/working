@@ -102,7 +102,7 @@
 			<beans:bean class="com.bs.spring.common.interceptor.LoggerInterceptor"/>
 		</interceptor>
 		<interceptor>
-			<mapping path="/demo/selectDemoAll.do"/>
+			<mapping path="/board/*"/>
 			<beans:ref bean="loginCheck"/><!-- 아래에 등록한 bean을 interceptor로 등록한다. -->
 		</interceptor>
 		<!-- <interceptor>

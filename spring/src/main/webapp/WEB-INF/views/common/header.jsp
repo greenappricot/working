@@ -42,13 +42,13 @@
 							<a class="nav-link" href="${path}/">HOME</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="${path}/demo/demo.do">Controller Test</a>
-						</li>
-						<li class="nav-item">
 							<a class="nav-link" href="${path}/demo/selectDemoAll.do">Demo List</a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link" href="${path}/memo/selectMemoAll.do">Memo</a><!-- login한 상태여야 접근할 수 있음 / admin이어야함 -->
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="${path}/board/boardList.do">Board</a>
 						</li>
 					</ul>
 					<c:if test="${empty loginMember}">
