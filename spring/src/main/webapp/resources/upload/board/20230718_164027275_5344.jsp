@@ -4,12 +4,14 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <c:set var="path" value="${pageContext.request.contextPath}"/>
 <jsp:include page="/WEB-INF/views/common/header.jsp">
-	<jsp:param name="title" value="게시글 등록"/>
+	<jsp:param name="title" value=""/>
 </jsp:include>
 <div id="board-container">
-        <form name="boardFrm" action="${path }/board/insertBoard.do" method="post" enctype="multipart/form-data" >
+        <form name="boardFrm" action="${path }/board/insertBoard.do" 
+        method="post" enctype="multipart/form-data" >
             <input type="text" class="form-control" placeholder="제목" name="boardTitle" id="boardTitle" required>
-            <input type="text" class="form-control" placeholder="아이디 (4글자이상)" name="writer" value="${loginMember.userId}" readonly required>
+            <input type="text" class="form-control" placeholder="아이디 (4글자이상)" name="boardWriter" 
+            value="${loginMember.userId}" readonly required>
             <div class="input-group mb-3" style="padding:0px;">
                 <div class="input-group-prepend" style="padding:0px;">
                     <span class="input-group-text">첨부파일1</span>
@@ -47,3 +49,5 @@
     div#board-container input{margin-bottom:15px;}
     </style>
 <jsp:include page="/WEB-INF/views/common/footer.jsp"/>
+
+

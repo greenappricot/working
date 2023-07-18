@@ -23,7 +23,7 @@
 		            	<td>${m.memoNo }</td>
 		            	<td>${m.memo }</td>
 		            	<td>${m.memodate }</td>
-		            	<td><button class="btn btn-outline-danger my-2 my-sm-0" onclick="location.assing('${path}/memo/deleteMemo.do')">삭제</button></td>
+		            	<td><button class="btn btn-outline-danger my-2 my-sm-0" onclick="location.assign('${path}/memo/deleteMemo.do')">삭제</button></td>
 		            </tr>
 	            </c:forEach>
             </c:if>

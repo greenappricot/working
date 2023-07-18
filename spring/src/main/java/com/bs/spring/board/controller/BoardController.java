@@ -1,18 +1,25 @@
 package com.bs.spring.board.controller;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URLEncoder;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,6 +28,7 @@ import com.bs.spring.board.model.dto.Attachment;
 import com.bs.spring.board.model.dto.Board;
 import com.bs.spring.board.service.BoardService;
 import com.bs.spring.common.PageFactory;
+import com.bs.spring.member.model.dto.Member;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -109,9 +117,16 @@ public class BoardController {
 	}
 	
 	@RequestMapping("/insertBoard.do")
-	public String insertBoard(Board b, MultipartFile[] upFile, HttpSession session, Model m) {
+	public String insertBoard(Board b, String writer, MultipartFile[] upFile, HttpSession session, Model m) {
 		log.info("{}",b);
 		log.info("{}",upFile);
+		
+		// Board 객체에서 Member 객체를 참조해서 boardWriter를 가져오기 때문에 따로 writer를 받아와서 처리해야한다.
+		// Member 생성해서 넣어야함
+		//Member member=new Member().builder().userId(writer).build();
+		
+//		Member member=(Member)session.getAttribute("loginMember");
+		b.setBoardWriter((Member)session.getAttribute("loginMember"));
 		
 		//MultipartFile에서 제공하는 메소드를 이용해서 
 		//파일을 저장할 수 있음 -> transferTo()메소드를 이용
@@ -168,4 +183,38 @@ public class BoardController {
 		return "board/boardView";
 	}
 	
+	// 파일 다운로드
+	@RequestMapping("/fileDownload")
+	public void fileDownload(String oriName, String reName, OutputStream out, @RequestHeader(value="user-agent") String header, HttpSession session, HttpServletResponse response) {
+		String path=session.getServletContext().getRealPath("/resources/upload/board/"); // 실제 경로
+		File downloadFile = new File(path+reName);
+		try(FileInputStream fis = new FileInputStream(downloadFile);
+			BufferedInputStream bis = new BufferedInputStream(fis); // 빠른 처리를 위해 buffer 사용	
+			BufferedOutputStream bos = new BufferedOutputStream(out);) {
+			
+			boolean isMS = header.contains("Trident") || header.contains("MSIE");
+			String encodeRename="";
+			if(isMS) {
+				encodeRename = URLEncoder.encode(oriName,"UTF-8");
+				encodeRename = encodeRename.replaceAll("\\+","%20");
+			}else {
+				encodeRename = new String(oriName.getBytes("UTF-8"),"ISO-8859-1");
+			}
+			response.setContentType("application/octet-stream;charset=utf-8"); // contentType정해준다
+			response.setHeader("Content-Disposition", "attachment;filename=\""+encodeRename+"\"");
+			
+			int read = -1;
+			while((read=bis.read())!=-1) {
+				bos.write(read);
+			}
+		}catch(IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
 }
+
+
+
+

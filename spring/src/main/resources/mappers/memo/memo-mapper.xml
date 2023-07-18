@@ -8,7 +8,7 @@
 		<result property="memodate" column="MEMODATE "/>
 	</resultMap>
 	<select id="selectMemoAll" resultType="memo">
-		SELECT * FROM MEMO
+		SELECT * FROM MEMO ORDER BY MEMODATE DESC
 	</select>
 	<insert id="insertMemo" parameterType="memo">
 		INSERT INTO MEMO VALUES(SEQ_MEMONO.NEXTVAL, #{memo},#{password},DEFAULT)

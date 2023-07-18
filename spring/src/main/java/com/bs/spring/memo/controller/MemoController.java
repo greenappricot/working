@@ -40,7 +40,7 @@ public class MemoController {
 		String msg, loc;
 		if(result>0) {
 			msg="등록 성공";
-			loc="/";
+			loc="/memo/selectMemoAll.do";
 		}else {
 			msg="등록 실패";
 			loc="/memo/memo.do";
@@ -52,17 +52,18 @@ public class MemoController {
 	
 	@RequestMapping("/memo/deleteMemo.do")
 	public String deleteMemo(int memoNo, Model model) {
-		int result=service.deleteMemo(memoNo);
-		String msg, loc;
-		if(result>0) {
-			msg="등록 성공";
-			loc="/";
-		}else {
-			msg="등록 실패";
-			loc="/memo/memo.do";
-		}
-		model.addAttribute("msg",msg);
-		model.addAttribute("loc",loc);
+		log.debug("{}", memoNo);
+		//int result=service.deleteMemo(memoNo);
+		//String msg, loc;
+		//if(result>0) {
+//			msg="삭제 성공";
+//			loc="/";
+//		}else {
+//			msg="삭제 실패";
+//			loc="/memo/memo.do";
+//		}
+//		model.addAttribute("msg",msg);
+//		model.addAttribute("loc",loc);
 		return "/common/msg";
 	}
 	
