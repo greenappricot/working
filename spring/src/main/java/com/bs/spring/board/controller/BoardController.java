@@ -1,16 +1,23 @@
 package com.bs.spring.board.controller;
 
+import java.io.File;
+import java.io.IOException;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.bs.spring.board.model.dto.Attachment;
 import com.bs.spring.board.model.dto.Board;
 import com.bs.spring.board.service.BoardService;
 import com.bs.spring.common.PageFactory;
@@ -96,23 +103,62 @@ public class BoardController {
 		return "board/boardList";
 	}
 	
-	@RequestMapping("/insertBoardPage.do")
-	public String insertBoardPage() {
-		return "board/insertBoard";
+	@RequestMapping("/boardForm.do")
+	public String boardForm() {
+		return "board/boardForm";
 	}
 	
 	@RequestMapping("/insertBoard.do")
-	public String insertBoard(Board b, Model m) {
+	public String insertBoard(Board b, MultipartFile[] upFile, HttpSession session, Model m) {
+		log.info("{}",b);
+		log.info("{}",upFile);
 		
-		int result = service.insertBoard(b);
-		if(result>0) {
-			m.addAttribute("msg","등록 성공");
-			m.addAttribute("loc","/");
-		}else {
-			m.addAttribute("msg","등록 실패");
-			m.addAttribute("loc","/insertBoard.do");
+		//MultipartFile에서 제공하는 메소드를 이용해서 
+		//파일을 저장할 수 있음 -> transferTo()메소드를 이용
+		//절대경로 가져오기
+		String path=session.getServletContext().getRealPath("/resources/upload/board/");
+		//파일명에 대한 renamed규칙을 설정
+		//직접리네임규칙을 만들어서 저장해보자.
+		//yyyyMMdd_HHmmssSSS_랜덤값
+//		List<Attachment> files=new ArrayList();
+		if(upFile!=null) {
+			for(MultipartFile mf:upFile) {
+				if(!mf.isEmpty()) {
+					String oriName=mf.getOriginalFilename();
+					String ext=oriName.substring(oriName.lastIndexOf("."));
+					Date today=new Date(System.currentTimeMillis());
+					SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMdd_HHmmssSSS");
+					int rdn=(int)(Math.random()*10000)+1;
+					String rename=sdf.format(today)+"_"+rdn+ext;
+					
+					try {
+						mf.transferTo(new File(path+rename));
+					}catch(IOException e) {
+						e.printStackTrace();
+					}
+					
+					Attachment file=Attachment.builder()
+							.originalFilename(oriName)
+							.renamedFilename(rename)
+							.build();
+					
+					b.getFile().add(file);
+				}
+			}
 		}
-		return "common/msg";
+		try {
+			service.insertBoard(b);
+		}catch(RuntimeException e) {
+			// 입력 실패 시 업로드 한 데이터 삭제하기
+			for(Attachment a : b.getFile()) {
+				File delFile = new File(path+a.getRenamedFilename());
+				delFile.delete();
+			}
+			m.addAttribute("msg","게시글 등록 실패 :P");
+			m.addAttribute("loc","/board/boardForm.do");
+			return "common/msg"; // service에서 exception 발생하면 msg 출력한다.
+		}
+		return "redirect:/board/boardList.do";
 	}
 	
 	@RequestMapping("/selectBoardByNo.do")

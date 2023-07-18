@@ -7,5 +7,6 @@
 		<typeAlias alias="member" type="com.bs.spring.member.model.dto.Member"/>
 		<typeAlias alias="memo" type="com.bs.spring.memo.model.dto.Memo"/>
 		<typeAlias alias="board" type="com.bs.spring.board.model.dto.Board"/>
+		<typeAlias alias="attachment" type="com.bs.spring.board.model.dto.Attachment"/>
 	</typeAliases>
 </configuration>

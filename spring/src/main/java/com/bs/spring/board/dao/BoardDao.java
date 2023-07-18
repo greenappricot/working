@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 
+import com.bs.spring.board.model.dto.Attachment;
 import com.bs.spring.board.model.dto.Board;
 
 public interface BoardDao {
@@ -12,4 +13,5 @@ public interface BoardDao {
 	int insertBoard(SqlSession session, Board b);
 	int countBoardAll(SqlSession session);
 	Board selectBoardByNo(SqlSession session, int boardNo);
+	int insertAttachment(SqlSession session, Attachment a);
 }
