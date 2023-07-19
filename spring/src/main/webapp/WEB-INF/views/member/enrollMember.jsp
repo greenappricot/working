@@ -46,6 +46,8 @@
 			<!-- tag 이름 변경하기 / memberController에서 선언한 @modelAttribute와 연결 -->
 			<springform:form modelAttribute="member" name="memberEnrollFrm" action="${path}/member/insertMember.do" method="post">
 				<springform:input path="userId" type="text" class="form-control" placeholder="아이디 (4글자이상)" name="userId" id="userId_"/><!-- path에 필드명 써준다. -->
+				<button type="button" class="btn btn-outline-danger" onclick="fn_idCheck();">중복 확인</button>
+				<span id="result"></span>
 				<springform:errors path="userId" cssClass="error"/>
 				<springform:input path="password" type="password" class="form-control" placeholder="비밀번호" name="password" id="password_"/>
 				<springform:errors path="password" cssClass="error"/>
@@ -78,5 +80,43 @@
 				<input type="reset" class="btn btn-outline-success" value="취소">
 			</springform:form>
 		</div>
+	<script>
+		/* const fn_idCheck=()=>{
+			const userId=$("#userId_").val();
+			if(userId!=null && userId.trim.length=<4){
+				console.log(userId);
+				$.get("${path}/ajax/idCheck?id="+userId,(data)=>{
+					console.log(data);
+					if(data!=null){
+						alert("아이디는 4글자 이상 입력하세요");
+					}else {
+						$("#result").val("사용 가능한 아이디 입니다.");
+					}
+				})
+			}else {
+				alert("아이디는 4글자 이상 입력하세요");
+			}
+		} */
+		
+		const fn_idCheck=()=>{
+			const userId=$("#userId_").val();
+			if(userId.trim().length>=4){
+				// post 방식으로 보내기
+				$.post("${path}/ajax/idDuplicate",{"userId":$("#userId_").val()},
+						data =>{
+						console.log(typeof data);
+						if(data.length==0){ // data==null 으로 비교하면 빈 값에 대한 분기처리를 할 수 없다.
+							console.log("사용 O");
+							$("#result").text("사용이 가능한 아이디입니다.").css("color","green");
+						}else{
+							console.log("사용 X");
+							$("#result").text("사용이 불가능한 아이디입니다.").css("color","red");
+						}
+				})
+			}else {
+				alert("아이디는 4글자 이상 입력하세요");
+			}
+		}
+	</script>
 </section>
 <jsp:include page="/WEB-INF/views/common/footer.jsp"/>
