@@ -33,6 +33,57 @@
 			}) */
 			
 			// javascript가 fetch 함수를 제공함
+			// jquery와 달리 다른 라이브러리가 없어도 사용할 수 있는 fetch 함수를 제공함 
+			// callback 함수로 promise / then 구절 사용 
+			// fetch("url-address",{요청에 대한 옵션(K:V 형태의 객체)}) // HttpRequest를 요청하고 HttpResponse를 반환함
+			//	.then(response=>{response.json()}) // 응답 내용을 parsing할 수 있다. (중간매개체로 활용할 수 있다. / error 처리할 수 있음) -> 데이터를 받아서 json방식으로 parsing한다.
+			//	.then(data=>{처리로직}) // success 함수 
+			
+			// get방식으로 보낼 경우 method설정을 생략하고 바로 then절을 사용할 수 있다.
+			/* fetch("${pageContext.request.contextPath}/ajax/selectMemberAll")
+				.then(response=>{
+					console.log(response); // response 객체가 반환되므로 response body에 포함된 속성들을 제어할 수 있다.
+					if(!response.ok) throw new Error("요청 실패"); // 새로운 에러를 exception을 발생시킬 수 있다.
+					return response.json(); // return값으로 다음 then(success 구문에 해당하는)에서  실행한다. 
+					// controller의 responsebody에서 전달한 객체를 json으로 parsing해서 return한다
+				}).then(data=>{
+					console.log(data);
+				}).catch(e=>{
+					alert(e);
+			}); */
+			
+			
+			/* fetch("${pageContext.request.contextPath}/ajax/selectMemberAll",{
+				method:"get" // post 방식
+				// headers:{} contentType설정 또는 header에 보낼 값을 정할 수 있다.
+				// body : {} JSON.stringify(객체) 전달할 객체를 JSON형식으로 변환해서 전송할 수 있다. 
+			}).then(response=>{
+				console.log(response); // response 객체가 반환되므로 response body에 포함된 속성들을 제어할 수 있다.
+				if(!response.ok) throw new Error("요청 실패"); // 새로운 에러를 exception을 발생시킬 수 있다.
+				return response.json(); // return값으로 다음 then(success 구문에 해당하는)에서  실행한다. 
+				// controller의 responsebody에서 전달한 객체를 json으로 parsing해서 return한다
+			}).then(data=>{
+				console.log(data);
+			}).catch(e=>{
+				alert(e);
+			}); */
+			
+			fetch("${pageContext.request.contextPath}/ajax/insertData.do",{
+				method:"post",
+				headers:{
+					"Content-type" : "application/json"
+				}, body : JSON.stringify(data) 
+			}).then(response=>{
+				if(!response.ok) new Error("입력실패");
+				// return response.json(); 서버가 json으로 응답했을 때 
+				// 서버가 일반 문자를 반환했을 때 ? text()메소드 사용 / response.text() 
+						
+			}).then(data=>{
+				console.log(data)
+			}).catch(e=>{
+				// 다른 페이지로 전환하는 등 exception 발생했을 때 처리 가능
+			});
+			
 			
 			
 		}
@@ -97,6 +148,33 @@
 				$("#ajaxContainer").html(tbl);
 			})
 		}
+		
+		
+		
+		
+		
+		
+		
+		
 	</script>
 </section>
 <jsp:include page="/WEB-INF/views/common/footer.jsp"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

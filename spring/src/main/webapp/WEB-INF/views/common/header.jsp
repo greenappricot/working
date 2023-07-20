@@ -63,6 +63,7 @@
 							</a>
 							님 환영합니다.
 						</span>&nbsp;
+						<button class="btn btn-outline-primary my-2 my-sm-0" onclick="chattingOpen();">채팅</button>
 						<button class="btn btn-outline-dark my-2 my-sm-0" onclick="location.assign('${path}/member/logoutMember.do')">로그아웃</button>
 					</c:if>
 				</div>
@@ -90,3 +91,8 @@
 				</div>
 			</div>
 		</div>
+		<script>
+			const chattingOpen=()=>{
+				open("${path}/chattingPage","_blank","width=400, height=500");
+			}
+		</script>
